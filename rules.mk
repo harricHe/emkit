@@ -2,10 +2,10 @@ $(TARGET_LIB): $(OBJECTS) $(BUILD_LIB_DIR)
 	$(AR) $(ARFLAGS) $@ $(OBJECTS)
 
 $(TARGET_TEST): $(OBJECTS) $(BUILD_TEST_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLGAS) $(LIBDIRS) $(LIBS) -o $@ $(OBJECTS)
+	$(CC) $(LDFLGAS) $(LIBDIRS) $(LIBS) -o $@ $(OBJECTS)
 
 $(BUILD_OBJ_DIR)/%.o:%.c $(BUILD_OBJ_DIR)
-	$(CC) $(CFLAGS) $(INCLUDES) $(LDFLGAS) -o $@ -c $<
+	$(CC) $(CFLAGS) $(INCLUDES) -o $@ -c $<
 
 $(BUILD_OBJ_DIR):
 	mkdir -p $@

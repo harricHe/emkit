@@ -1,8 +1,12 @@
 RM := rm -rf
 CC ?= gcc
+AS := as
 AR := ar
-CFLAGS := -g -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
+LD := ld
+STRIP := strip
+CFLAGS := -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
 CFLAGS += -pedantic-errors
+CFLAGS += -g -O0
 CFLAGS += -MMD -MP
 ARFLAGS := crsv
 LDFLGAS := 

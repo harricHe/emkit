@@ -25,7 +25,7 @@ all:
 		$(MAKE) -C $(SOURCE_DIR)/$$module || exit $?; \
 	done
 
-test: all
+test:
 	@for module in $(TARGETS); do \
 		$(MAKE) -C $(TEST_DIR)/$$module || exit $?; \
 	done
