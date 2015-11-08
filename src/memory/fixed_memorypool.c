@@ -84,16 +84,13 @@ error_t fixedmpool_destroy(handle_t hdl)
 static void* allocate_block(fixedmpool_t *base)
 {
 	block_t *blk;
-	/* <lock> {{ */
 	if (!base->free) {
-		/* }} <unlock> */
 		return NULL;
 	}
 	blk = base->free;
 	base->free = blk->header.next_free_blk;
 	blk->header.next_free_blk = NULL;
 	base->ava_blks--;
-	/* }} <unlock> */
 	return (void*)blk->data;
 }
 
@@ -101,11 +98,9 @@ static void* allocate_block(fixedmpool_t *base)
 static error_t free_block(fixedmpool_t *base, void *data)
 {
 	block_t *blk = (block_t*)((uint8_t*)data - sizeof(blockheader_t));
-	/* <lock> {{ */
 	blk->header.next_free_blk = base->free;
 	base->free = blk;
 	base->ava_blks++;
-	/* }} <unlock> */
 	return 0;
 }
 

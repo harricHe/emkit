@@ -5,8 +5,8 @@
 
 typedef struct {
 	uint32_t signeture;
-	void    *buffer_start;
-	void    *buffer_end;
+	uint8_t *buffer_start;
+	uint8_t *buffer_end;
 	uint8_t *rp;
 	uint8_t *wp;
 	size_t  blksz;
@@ -34,7 +34,7 @@ static inline uint8_t* step_pointer(const fixringbuf_t *base, const uint8_t *p)
 	if (p >= base->buffer_end) {
 		p = base->buffer_start;
 	}
-	return p;
+	return (uint8_t*)p;
 }
 
 
