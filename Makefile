@@ -3,10 +3,10 @@ ROOT_DIR := .
 include $(ROOT_DIR)/defs.mk
 
 SOURCE_DIR := $(ROOT_DIR)/src
-# TEST_DIR = $(ROOT_DIR)/test
-TARGET_DIR = $(addprefix $(SOURCE_DIR)/,$(TARGETS))
-LIBS = $(addprefix $(BUILD_LIB_DIR)/,$(addsuffix .a,$(TARGETS)))
-# TESTS = $(addprefix $(BUILD_TEST_DIR)/,$(addsuffix .a,$(TARGETS)))
+TEST_DIR = $(ROOT_DIR)/test
+
+TARGET_LIBS = $(addprefix $(BUILD_LIB_DIR)/,$(addsuffix .a,$(TARGETS)))
+TARGET_TESTS = $(addprefix $(BUILD_TEST_DIR)/,$(addsuffix .a,$(TARGETS)))
 
 TARGETS = 
 # TARGETS += archive
@@ -21,17 +21,26 @@ TARGETS += memory
 # TARGETS += sort
 # TARGETS += string
 
-.PHONY: all
-all: $(LIBS)
+.PHONY: all test clean testclean rebuild
 
-$(LIBS):
-	$(MAKE) -C $(SOURCE_DIR)/$(call file_basename,$@)
+all:
+	@for module in $(TARGETS); do \
+		$(MAKE) -C $(SOURCE_DIR)/$$module || exit $?; \
+	done
 
-# .PHONY: test
-# test:
-# 	$(MAKE) -C $(TEST_DIR)
+test: all
+	@for module in $(TARGETS); do \
+		$(MAKE) -C $(TEST_DIR)/$$module || exit $?; \
+	done
+	# TODO: execute unit tests
 
-.PHONY: clean
 clean:
 	$(RM) $(BUILD_DIR)
+
+testclean:
+	@for module in $(TARGETS); do \
+		$(MAKE) -C $(TEST_DIR)/$$module clean || exit $?; \
+	done
+
+rebuild: clean all
 

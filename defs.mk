@@ -12,13 +12,16 @@ BUILD_OBJ_DIR := $(BUILD_DIR)/obj
 BUILD_LIB_DIR := $(BUILD_DIR)/lib
 BUILD_TEST_DIR := $(BUILD_DIR)/test
 INCLUDES = $(addprefix -I,$(INCLUDE_DIR))
+LIBDIRS = $(addprefix -L,$(BUILD_LIB_DIR))
 
 OBJECTS = $(addprefix $(BUILD_OBJ_DIR)/,$(SOURCES:.c=.o))
 DEPENDS = $(OBJECTS:.o=.d)
-TARGET  = $(BUILD_LIB_DIR)/lib$(MODULE).a
+TARGET_LIB  = $(BUILD_LIB_DIR)/$(call libname,$(MODULE))
+TARGET_TEST = $(BUILD_TEST_DIR)/$(MODULE)_test
 
 # functions definitions
-file_basename = $(basename $(notdir $(1)))
+modulename = $(basename $(notdir $(1)))
+libname = lib$(1).a
 
 # module dependent values
 MODULE ?= 

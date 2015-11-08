@@ -10,5 +10,9 @@ SOURCES += fixed_memorypool.c
 # SOURCES += memorypool.c
 
 include $(ROOT_DIR)/defs.mk
+
+.PHONY: all
+all: $(TARGET_LIB)
+
 include $(ROOT_DIR)/rules.mk
 
