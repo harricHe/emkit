@@ -1,6 +1,8 @@
 #ifndef __TYPES_H__
 #define __TYPES_H__
 
+#include <stddef.h>
+
 typedef signed char      int8_t;
 typedef unsigned char    uint8_t;
 typedef signed short     int16_t;
@@ -12,7 +14,6 @@ typedef unsigned long    uint64_t;
 typedef float            float32_t;
 typedef double           float64_t;
 typedef int              bool_t;
-typedef unsigned int     size_t;
 typedef int32_t          error_t;
 typedef void*            handle_t;
 
@@ -20,7 +21,6 @@ typedef void*            handle_t;
 #define FALSE (0)
 #define OK    (0)
 #define NG    (-1)
-#define NULL  (void*)(0)
 
 #define PACK(a, b, c, d) (uint32_t)(((a)<<24) | ((b)<<16) | ((c)<<8) | (d))
 #define NULL_SIGNATURE 0x00000000
