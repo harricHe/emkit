@@ -2,6 +2,7 @@ RM := rm -rf
 CC := gcc
 AR := ar
 CFLAGS := -g -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
+CFLAGS += -pedantic-errors
 CFLAGS += -MMD -MP
 ARFLAGS := crsv
 LDFLGAS := 

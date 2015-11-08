@@ -5,9 +5,6 @@ include $(ROOT_DIR)/defs.mk
 SOURCE_DIR := $(ROOT_DIR)/src
 TEST_DIR = $(ROOT_DIR)/test
 
-TARGET_LIBS = $(addprefix $(BUILD_LIB_DIR)/,$(addsuffix .a,$(TARGETS)))
-TARGET_TESTS = $(addprefix $(BUILD_TEST_DIR)/,$(addsuffix .a,$(TARGETS)))
-
 TARGETS = 
 # TARGETS += archive
 # TARGETS += bit
