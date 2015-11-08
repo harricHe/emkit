@@ -20,21 +20,25 @@ TARGETS += memory
 
 .PHONY: all test clean testclean rebuild
 
-all:
+all: build-lib build-test
+
+build-lib:
 	@for module in $(TARGETS); do \
 		$(MAKE) -C $(SOURCE_DIR)/$$module || exit $?; \
 	done
 
-test:
+build-test:
 	@for module in $(TARGETS); do \
 		$(MAKE) -C $(TEST_DIR)/$$module || exit $?; \
 	done
+
+test:
 	# TODO: execute unit tests
 
 clean:
 	$(RM) $(BUILD_DIR)
 
-testclean:
+clean-test:
 	@for module in $(TARGETS); do \
 		$(MAKE) -C $(TEST_DIR)/$$module clean || exit $?; \
 	done
