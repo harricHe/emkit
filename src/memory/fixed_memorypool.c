@@ -1,4 +1,5 @@
 #include "fixed_memorypool.h"
+#include <string.h>
 
 #define FIXED_MEMORYPOOL_SIGNATURE PACK('f','m','p','l')
 
@@ -21,8 +22,13 @@ typedef struct {
 
 
 static fixedmpool_t* get_object(void) {
-	static fixedmpool_t objs[CONFIG_NUMOF_FIXEDMEMORYPOOLS] = { 0 };
+	static fixedmpool_t objs[CONFIG_NUMOF_FIXEDMEMORYPOOLS];
+	static bool_t has_inited = 0;
 	int32_t i;
+	if (!has_inited) {
+		memset(objs, 0, sizeof(objs));
+		has_inited = 1;
+	}
 	for (i=0; i<CONFIG_NUMOF_FIXEDMEMORYPOOLS; i++) {
 		if (objs[i].signature == NULL_SIGNATURE)
 			return &objs[i];

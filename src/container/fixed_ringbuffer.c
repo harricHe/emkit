@@ -17,8 +17,13 @@ typedef struct {
 
 static fixringbuf_t* get_object(void)
 {
-	static fixringbuf_t objs[CONFIG_NUMOF_FIXEDRINGBUFFERS] = { 0 };
+	static fixringbuf_t objs[CONFIG_NUMOF_FIXEDRINGBUFFERS];
+	static bool_t has_inited = 0;
 	int32_t i;
+	if (!has_inited) {
+		memset(objs, 0, sizeof(objs));
+		has_inited = 1;
+	}
 	for (i=0; i<CONFIG_NUMOF_FIXEDRINGBUFFERS; i++) {
 		if (!objs[i].signeture == NULL_SIGNATURE) {
 			return &objs[i];
@@ -82,14 +87,7 @@ error_t fixedringbuf_write(handle_t hdl, const void *block)
 		return -1;
 
 	memcpy(base->wp, block, base->blksz);
-#if 1
 	base->wp = step_pointer(base, base->wp);
-#else
-	base->wp += base->blksz;
-	if (base->wp >= base->buffer_end) {
-		base->wp = base->buffer_start;
-	}
-#endif
 	base->used++;
 	if (base->used > base->blkcnt) {
 		/* over flow */
@@ -109,14 +107,7 @@ error_t fixedringbuf_read(handle_t hdl, void *block)
 		return -1;
 	if (!base->used) return -1;
 	memcpy(block, base->rp, base->blksz);
-#if 1
 	base->rp = step_pointer(base, base->rp);
-#else
-	base->rp += base->blksz;
-	if (base->rp >= base->buffer_end) {
-		base->rp = base->buffer_start;
-	}
-#endif
 	base->used--;
 	return 0;
 }
@@ -125,19 +116,15 @@ error_t fixedringbuf_read(handle_t hdl, void *block)
 void* fixedringbuf_get(handle_t hdl)
 {
 	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	void *p;
 	if (!base) return NULL;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
 		return NULL;
 	if (!base->used) return NULL;
-#if 1
+	p = base->rp;
 	base->rp = step_pointer(base, base->rp);
-#else
-	base->rp += base->blksz;
-	if (base->rp >= base->buffer_end) {
-		base->rp = base->buffer_start;
-	}
-#endif
 	base->used--;
+	return p;
 }
 
 
