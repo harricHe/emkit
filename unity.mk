@@ -1,0 +1,14 @@
+CFLAGS += -DUNITY_FIXTURES
+CFLAGS += -DUNITY_EXCLUDE_STDINT_H
+
+UNITY_ROOT = $(ROOT_DIR)/Unity
+
+INCLUDE_DIR += $(UNITY_ROOT)/src
+INCLUDE_DIR += $(UNITY_ROOT)/extras/fixture/src
+
+UNITY_SOURCES  = 
+UNITY_SOURCES += $(UNITY_ROOT)/src/unity.c
+UNITY_SOURCES += $(UNITY_ROOT)/extras/fixture/src/unity_fixture.c
+
+UNITY_OBJECTS  = $(BUILD_OBJ_DIR)/unity.o
+UNITY_OBJECTS += $(BUILD_OBJ_DIR)/unity_fixture.o

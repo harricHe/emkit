@@ -4,7 +4,25 @@ AS := as
 AR := ar
 LD := ld
 STRIP := strip
-CFLAGS := -Wall -Wextra -Winit-self -Wno-unused-parameter -Wfloat-equal
+CFLAGS  = -std=c99
+CFLAGS += -Wall
+CFLAGS += -Wextra
+CFLAGS += -Werror
+CFLAGS += -Wpointer-arith
+# CFLAGS += -Wcast-align
+CFLAGS += -Wwrite-strings
+CFLAGS += -Wswitch-default
+CFLAGS += -Wunreachable-code
+CFLAGS += -Winit-self
+CFLAGS += -Wmissing-field-initializers
+CFLAGS += -Wno-unknown-pragmas
+CFLAGS += -Wstrict-prototypes
+CFLAGS += -Wundef
+CFLAGS += -Wold-style-definition
+CFLAGS += -Wmissing-prototypes
+CFLAGS += -Wmissing-declarations
+CFLAGS += -Wno-unused-parameter
+# CFLAGS += -Wfloat-equal
 CFLAGS += -pedantic-errors
 CFLAGS += -g -O0
 CFLAGS += -MMD -MP
@@ -19,8 +37,9 @@ BUILD_TEST_DIR := $(BUILD_DIR)/test
 INCLUDES = $(addprefix -I,$(INCLUDE_DIR))
 LIBDIRS = $(addprefix -L,$(BUILD_LIB_DIR))
 
-OBJECTS = $(addprefix $(BUILD_OBJ_DIR)/,$(SOURCES:.c=.o))
+OBJECTS = $(addprefix $(BUILD_OBJ_DIR)/,$($(notdir SOURCES):.c=.o))
 DEPENDS = $(OBJECTS:.o=.d)
+
 TARGET_LIB  = $(BUILD_LIB_DIR)/$(call libname,$(MODULE))
 TARGET_TEST = $(BUILD_TEST_DIR)/$(MODULE)_test
 

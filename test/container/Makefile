@@ -8,10 +8,11 @@ INCLUDE_DIR += $(ROOT_DIR)/src/common
 
 LIBS = -l$(MODULE)
 
-SOURCES  = 
+SOURCES  = main.c
 SOURCES += fixed_ringbuffer_test.c
 
 include $(ROOT_DIR)/defs.mk
+include $(ROOT_DIR)/unity.mk
 
 .PHONY: all
 all: $(TARGET_TEST)
