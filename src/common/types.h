@@ -23,6 +23,10 @@ typedef void*            handle_t;
 #define NG    (-1)
 
 #define PACK(a, b, c, d) (uint32_t)(((a)<<24) | ((b)<<16) | ((c)<<8) | (d))
+#define UNPACK1(s) (char)(0xFF & ((s)>>24))
+#define UNPACK2(s) (char)(0xFF & ((s)>>16))
+#define UNPACK3(s) (char)(0xFF & ((s)>>8))
+#define UNPACK4(s) (char)(0xFF & (s))
 #define NULL_SIGNATURE 0x00000000
 
 #endif /* __TYPES_H__ */
