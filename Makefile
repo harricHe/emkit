@@ -5,6 +5,8 @@ include $(ROOT_DIR)/defs.mk
 SOURCE_DIR := $(ROOT_DIR)/src
 TEST_DIR = $(ROOT_DIR)/test
 
+UNITTESTS = $(addsuffix _test,$(addprefix $(BUILD_TEST_DIR)/,$(TARGETS)))
+
 TARGETS = 
 # TARGETS += archive
 # TARGETS += bit
@@ -33,7 +35,10 @@ build-test:
 	done
 
 test:
-	# TODO: execute unit tests
+	@for unittest in $(UNITTESTS); do \
+		echo; echo $$unittest; \
+		$$unittest || exit $?; \
+	done
 
 clean:
 	$(RM) $(BUILD_DIR)

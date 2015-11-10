@@ -6,9 +6,7 @@ INCLUDE_DIR  = .
 INCLUDE_DIR += $(ROOT_DIR)/src/$(MODULE)
 INCLUDE_DIR += $(ROOT_DIR)/src/common
 
-LIBS = -l$(MODULE)
-
-SOURCES  = main.c
+SOURCES  = test_container.c
 SOURCES += fixed_ringbuffer_test.c
 
 include $(ROOT_DIR)/defs.mk
@@ -22,5 +20,5 @@ clean:
 	$(RM) $(addprefix $(BUILD_OBJ_DIR)/,$(SOURCES:.c=.d))
 	$(RM) $(TARGET_TEST)
 
-include $(ROOT_DIR)/rules.mk
+include $(ROOT_DIR)/rules-test.mk
 

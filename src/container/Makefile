@@ -21,5 +21,5 @@ include $(ROOT_DIR)/defs.mk
 .PHONY: all
 all: $(TARGET_LIB)
 
-include $(ROOT_DIR)/rules.mk
+include $(ROOT_DIR)/rules-lib.mk
 

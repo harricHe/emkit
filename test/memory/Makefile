@@ -8,11 +8,12 @@ INCLUDE_DIR += $(ROOT_DIR)/src/common
 
 LIBS = -l$(MODULE)
 
-SOURCES  = 
+SOURCES  = test_memory.c
 SOURCES += fixed_memorypool_test.c
 # SOURCES += memorypool.c
 
 include $(ROOT_DIR)/defs.mk
+include $(ROOT_DIR)/unity.mk
 
 .PHONY: all
 all: $(TARGET_TEST)
@@ -22,5 +23,5 @@ clean:
 	$(RM) $(addprefix $(BUILD_OBJ_DIR)/,$(SOURCES:.c=.d))
 	$(RM) $(TARGET_TEST)
 
-include $(ROOT_DIR)/rules.mk
+include $(ROOT_DIR)/rules-test.mk
 
