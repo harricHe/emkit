@@ -16,10 +16,10 @@ SOURCES += fixed_ringbuffer.c
 # SOURCES += stack.c
 # SOURCES += tree.c
 
-include $(ROOT_DIR)/defs.mk
+include $(ROOT_DIR)/mk/defs.mk
 
 .PHONY: all
 all: $(TARGET_LIB)
 
-include $(ROOT_DIR)/rules-lib.mk
+include $(ROOT_DIR)/mk/rules-lib.mk
 
