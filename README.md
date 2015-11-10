@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/ryochack/emkit.svg)](https://travis-ci.org/ryochack/emkit)
+
 emkit
 ======
 
