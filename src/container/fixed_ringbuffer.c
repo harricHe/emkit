@@ -25,7 +25,7 @@ static fixringbuf_t* get_object(void)
 		has_inited = 1;
 	}
 	for (i=0; i<CONFIG_NUMOF_FIXEDRINGBUFFERS; i++) {
-		if (!objs[i].signeture == NULL_SIGNATURE) {
+		if (objs[i].signeture == NULL_SIGNATURE) {
 			return &objs[i];
 		}
 	}
@@ -41,7 +41,6 @@ static inline uint8_t* step_pointer(const fixringbuf_t *base, const uint8_t *p)
 	}
 	return (uint8_t*)p;
 }
-
 
 handle_t fixedringbuf_create(void *memory, size_t blksz, size_t blkcnt)
 {

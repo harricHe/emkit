@@ -3,14 +3,13 @@
 
 #define FIXED_MEMORYPOOL_SIGNATURE PACK('f','m','p','l')
 
-typedef struct {
-	void *next_free_blk;
-} blockheader_t;
-
-typedef struct {
-	blockheader_t header;
+typedef struct block {
+	struct blockheader {
+		struct block *next_free_blk;
+	} header;
 	uint8_t data[];
 } block_t;
+typedef struct blockheader blockheader_t;
 
 typedef struct {
 	uint32_t signature;
@@ -40,13 +39,14 @@ static fixedmpool_t* get_object(void) {
 static void initialize_blocks(fixedmpool_t *base, void *memory, size_t blksz, size_t blkcnt)
 {
 	block_t *blk;
-	uint8_t *p = (uint8_t*)base;
+	uint8_t *p;
 	int32_t i, end = blkcnt -1;
 
 	base->ava_blks = blkcnt;
 	base->blksz  = blksz;
 	base->blkcnt = blkcnt;
 	base->free   = memory;
+	p = (uint8_t*)base->free;
 
 	for (i=0; i<end; i++) {
 		blk = (block_t*)p;
