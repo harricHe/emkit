@@ -4,6 +4,10 @@ compiler:
   - clang
   - gcc
 
+install:
+  - git submodule init
+  - git submodule update
+
 script:
   - make
   - make test
