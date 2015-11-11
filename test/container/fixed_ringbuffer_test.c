@@ -120,12 +120,39 @@ TEST(fixed_ringbuffer, size)
 	TEST_ASSERT_EQUAL_UINT32( using, fixedringbuf_used(s_handle) );
 }
 
+TEST(fixed_ringbuffer, purge)
+{
+	uint8_t txblk[BLOCK_SIZE] = {
+		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+		0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
+	};
+	uint32_t using = 0;
+	s_handle = fixedringbuf_create(s_pool, s_blocksize, s_blockcount);
+
+	TEST_ASSERT_EQUAL_UINT32( s_blockcount, fixedringbuf_available(s_handle) );
+	TEST_ASSERT_EQUAL_UINT32( 0, fixedringbuf_used(s_handle) );
+
+	fixedringbuf_write(s_handle, txblk); using++;
+	fixedringbuf_write(s_handle, txblk); using++;
+	fixedringbuf_write(s_handle, txblk); using++;
+
+	TEST_ASSERT_EQUAL_UINT32( s_blockcount - using, fixedringbuf_available(s_handle) );
+	TEST_ASSERT_EQUAL_UINT32( using, fixedringbuf_used(s_handle) );
+
+	TEST_ASSERT_UNLESS( fixedringbuf_purge(s_handle) );
+
+	TEST_ASSERT_EQUAL_UINT32( s_blockcount, fixedringbuf_available(s_handle) );
+	TEST_ASSERT_EQUAL_UINT32( 0, fixedringbuf_used(s_handle) );
+}
+
 TEST_GROUP_RUNNER(fixed_ringbuffer)
 {
+	/* normal tests */
     RUN_TEST_CASE(fixed_ringbuffer, create);
     RUN_TEST_CASE(fixed_ringbuffer, destroy);
 	RUN_TEST_CASE(fixed_ringbuffer, write_read);
 	RUN_TEST_CASE(fixed_ringbuffer, get);
 	RUN_TEST_CASE(fixed_ringbuffer, size);
+	RUN_TEST_CASE(fixed_ringbuffer, purge);
 }
 
