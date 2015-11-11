@@ -62,8 +62,8 @@ handle_t fixedmpool_create(void *memory, size_t blksz, size_t blkcnt)
 {
 	fixedmpool_t *base;
 	if (!memory) return NULL;
-	if (!blksz)  return NULL;
 	if (!blkcnt) return NULL;
+	if (blksz < sizeof(blockheader_t)) return NULL;
 
 	base = get_object();
 	if (!base) return NULL;
