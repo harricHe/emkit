@@ -12,8 +12,8 @@ SOURCES  = test_memory.c
 SOURCES += fixed_memorypool_test.c
 # SOURCES += memorypool.c
 
-include $(ROOT_DIR)/defs.mk
-include $(ROOT_DIR)/unity.mk
+include $(ROOT_DIR)/mk/defs.mk
+include $(ROOT_DIR)/mk/unity.mk
 
 .PHONY: all
 all: $(TARGET_TEST)
@@ -23,5 +23,5 @@ clean:
 	$(RM) $(addprefix $(BUILD_OBJ_DIR)/,$(SOURCES:.c=.d))
 	$(RM) $(TARGET_TEST)
 
-include $(ROOT_DIR)/rules-test.mk
+include $(ROOT_DIR)/mk/rules-test.mk
 

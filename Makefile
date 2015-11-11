@@ -1,6 +1,6 @@
 ROOT_DIR := .
 
-include $(ROOT_DIR)/defs.mk
+include $(ROOT_DIR)/mk/defs.mk
 
 SOURCE_DIR := $(ROOT_DIR)/src
 TEST_DIR = $(ROOT_DIR)/test
