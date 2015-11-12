@@ -5,6 +5,7 @@
 
 typedef struct block {
 	struct blockheader {
+		bool_t using;
 		struct block *next_free_blk;
 	} header;
 	uint8_t data[];
@@ -51,6 +52,7 @@ static void initialize_blocks(fixedmpool_t *base, void *memory, size_t blksz, si
 	for (i=0; i<end; i++) {
 		blk = (block_t*)p;
 		p  += blksz;
+		blk->header.using = FALSE;
 		blk->header.next_free_blk = (block_t*)p;
 	}
 	blk = (block_t*)p;
@@ -63,7 +65,7 @@ handle_t fixedmpool_create(void *memory, size_t blksz, size_t blkcnt)
 	fixedmpool_t *base;
 	if (!memory) return NULL;
 	if (!blkcnt) return NULL;
-	if (blksz < sizeof(blockheader_t)) return NULL;
+	if (blksz <= sizeof(blockheader_t)) return NULL;
 
 	base = get_object();
 	if (!base) return NULL;
@@ -95,6 +97,7 @@ static void* allocate_block(fixedmpool_t *base)
 	}
 	blk = base->free;
 	base->free = blk->header.next_free_blk;
+	blk->header.using = TRUE;
 	blk->header.next_free_blk = NULL;
 	base->ava_blks--;
 	return (void*)blk->data;
@@ -104,6 +107,10 @@ static void* allocate_block(fixedmpool_t *base)
 static error_t free_block(fixedmpool_t *base, void *data)
 {
 	block_t *blk = (block_t*)((uint8_t*)data - sizeof(blockheader_t));
+	if (!blk->header.using)
+		return -1;
+
+	blk->header.using = FALSE;
 	blk->header.next_free_blk = base->free;
 	base->free = blk;
 	base->ava_blks++;

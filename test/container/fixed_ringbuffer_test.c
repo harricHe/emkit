@@ -87,7 +87,7 @@ TEST(fixed_ringbuffer, size)
 		0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 	};
 	uint8_t *rxp;
-	uint32_t using = 0;
+	int using = 0;
 
 	s_handle = fixedringbuf_create(s_pool, s_blocksize, s_blockcount);
 	TEST_ASSERT_NOT_NULL( s_handle );
@@ -125,7 +125,7 @@ TEST(fixed_ringbuffer, purge)
 		0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
 		0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F
 	};
-	uint32_t using = 0;
+	int using = 0;
 
 	s_handle = fixedringbuf_create(s_pool, s_blocksize, s_blockcount);
 	TEST_ASSERT_NOT_NULL( s_handle );
