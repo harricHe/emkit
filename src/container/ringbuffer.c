@@ -75,11 +75,61 @@ error_t ringbuf_destroy(handle_t hdl)
 
 error_t ringbuf_write(handle_t hdl, const void *data, size_t size)
 {
-	return -1;
+	ringbuf_t *base = (ringbuf_t*)hdl;
+	const uint8_t *p = (const uint8_t*)data;
+	size_t taillen;
+	if (!base) return -1;
+	if (!data) return -1;
+	if (!size) return -1;
+	if (base->signeture != RINGBUFFER_SIGNATURE)
+		return -1;
+
+	taillen = base->buffer_end - base->wp;
+	if (taillen > size) {
+		memcpy(base->wp, p, size);
+		base->wp += size;
+	} else {
+		size_t headlen = size - taillen;
+		memcpy(base->wp, p, taillen);
+		memcpy(base->buffer_start, &p[taillen], headlen);
+		base->wp = base->buffer_start + headlen;
+	}
+
+	if (size > (base->capacity - base->used)) {
+		base->rp = base->wp;
+		base->used = base->capacity;
+	} else {
+		base->used += size;
+	}
+	return 0;
 }
 
 size_t ringbuf_read(handle_t hdl, void *data, size_t size)
 {
+	ringbuf_t *base = (ringbuf_t*)hdl;
+	uint8_t *p = (uint8_t*)data;
+	size_t taillen;
+	size_t asize;
+	if (!base) return -1;
+	if (!data) return -1;
+	if (!size) return -1;
+	if (base->signeture != RINGBUFFER_SIGNATURE)
+		return -1;
+
+	taillen = base->buffer_end - base->rp;
+	asize = ((base->capacity - base->used) > size)
+		? size : (base->capacity - base->used);
+	if (base->rp < base->wp) {
+		memcpy(p, base->rp, asize);
+		base->rp += asize;
+	} else {
+		size_t headlen = size - taillen;
+		memcpy(p, base->rp, taillen);
+		memcpy(&p[taillen], base->buffer_start, headlen);
+		base->rp = base->buffer_start + headlen;
+	}
+
+	base->used -= asize;
 	return 0;
 }
 
