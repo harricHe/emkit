@@ -54,7 +54,7 @@ handle_t fixedringbuf_create(void *memory, size_t blksz, size_t blkcnt)
 
 	base->signeture = FIXED_RINGBUFFER_SIGNATURE;
 	base->buffer_start = memory;
-	base->buffer_end   = (uint8_t*)base->buffer_start + (blksz * blkcnt);
+	base->buffer_end   = base->buffer_start + (blksz * blkcnt);
 	base->rp = base->buffer_start;
 	base->wp = base->buffer_start;
 	base->blksz  = blksz;
