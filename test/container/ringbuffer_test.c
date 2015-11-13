@@ -104,7 +104,7 @@ TEST(ringbuffer, purge)
 	TEST_ASSERT_NOT_NULL( s_handle );
 
 	TEST_ASSERT_EQUAL_UINT32( s_poolsize, ringbuf_available(s_handle) );
-	TEST_ASSERT_EQUAL_UINT32( s_poolsize, ringbuf_used(s_handle) );
+	TEST_ASSERT_EQUAL_UINT32( 0, ringbuf_used(s_handle) );
 
 	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, txdata, 30) );
 	TEST_ASSERT_EQUAL_UINT32( s_poolsize - 30, ringbuf_available(s_handle) );
