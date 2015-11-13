@@ -64,7 +64,13 @@ handle_t ringbuf_create(void *memory, size_t size)
 
 error_t ringbuf_destroy(handle_t hdl)
 {
-	return -1;
+	ringbuf_t *base = (ringbuf_t*)hdl;
+	if (!base) return -1;
+	if (base->signeture != RINGBUFFER_SIGNATURE)
+		return -1;
+
+	base->signeture = NULL_SIGNATURE;
+	return 0;
 }
 
 error_t ringbuf_write(handle_t hdl, const void *data, size_t size)
