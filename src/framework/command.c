@@ -76,14 +76,14 @@ static error_t cmd_add(base_t *base, const char *cmdname, commandfunc_t func)
 	int32_t i;
 	command_t *cmd = base->cmdlist;
 
-	for (i=0; i<(int32_t)base->cmdnum; i++) {
+	for (i=0; i<(int32_t)base->cmdcap; i++) {
 		if (!strcmp(cmd[i].name, cmdname)) {
 			// already added
 			return -1;
 		}
 	}
 
-	for (i=0; i<(int32_t)base->cmdnum; i++) {
+	for (i=0; i<(int32_t)base->cmdcap; i++) {
 		if (!cmd[i].func) {
 			strncpy(cmd[i].name, cmdname, COMMAND_NAME_SIZE);
 			cmd[i].func = func;
@@ -115,7 +115,7 @@ static error_t cmd_remove(base_t *base, const char *cmdname)
 	int32_t i;
 	command_t *cmd = base->cmdlist;
 
-	for (i=0; i<(int32_t)base->cmdnum; i++) {
+	for (i=0; i<(int32_t)base->cmdcap; i++) {
 		if (!strcmp(cmd[i].name, cmdname)) {
 			cmd[i].name[0] = 0;
 			cmd[i].func = NULL;
@@ -146,7 +146,7 @@ static error_t cmd_execute(base_t *base, int32_t argc, const char **argv)
 	int32_t i;
 	command_t *cmd = base->cmdlist;
 
-	for (i=0; i<(int32_t)base->cmdnum; i++) {
+	for (i=0; i<(int32_t)base->cmdcap; i++) {
 		if (!strcmp(cmd[i].name, argv[0])) {
 			if (!cmd[i].func) {
 				return -1;
