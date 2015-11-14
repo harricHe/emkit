@@ -48,18 +48,18 @@ TEST(ringbuffer, write_read)
 		txdata[i] = i;
 	}
 
-	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, tp, 10) ); tp += 10;
-	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, tp, 20) ); tp += 20;
+	TEST_ASSERT_EQUAL_UINT32( 10, ringbuf_write(s_handle, tp, 10) ); tp += 10;
+	TEST_ASSERT_EQUAL_UINT32( 20, ringbuf_write(s_handle, tp, 20) ); tp += 20;
 
-	TEST_ASSERT_UNLESS( ringbuf_read(s_handle, rp, 20) ); rp += 20;
+	TEST_ASSERT_EQUAL_UINT32( 20, ringbuf_read(s_handle, rp, 20) ); rp += 20;
 
-	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, tp, 15) ); tp += 15;
-	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, tp, 15) ); tp += 15;
+	TEST_ASSERT_EQUAL_UINT32( 15, ringbuf_write(s_handle, tp, 15) ); tp += 15;
+	TEST_ASSERT_EQUAL_UINT32( 15, ringbuf_write(s_handle, tp, 15) ); tp += 15;
 	/* Tx total 60Byte */
 
-	TEST_ASSERT_UNLESS( ringbuf_read(s_handle, rp, 10) ); rp += 10;
-	TEST_ASSERT_UNLESS( ringbuf_read(s_handle, rp, 20) ); rp += 20;
-	TEST_ASSERT_UNLESS( ringbuf_read(s_handle, rp, 10) ); rp += 10;
+	TEST_ASSERT_EQUAL_UINT32( 10, ringbuf_read(s_handle, rp, 10) ); rp += 10;
+	TEST_ASSERT_EQUAL_UINT32( 20, ringbuf_read(s_handle, rp, 20) ); rp += 20;
+	TEST_ASSERT_EQUAL_UINT32( 10, ringbuf_read(s_handle, rp, 10) ); rp += 10;
 	/* Rx total 60Byte */
 
 	TEST_ASSERT_EQUAL_UINT8_ARRAY( txdata, rxdata, 60 ); 
@@ -74,8 +74,8 @@ TEST(ringbuffer, read_to)
 	s_handle = ringbuf_create(s_pool, s_poolsize);
 	TEST_ASSERT_NOT_NULL( s_handle );
 
-	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, txmsg, strlen(txmsg)) );
-	TEST_ASSERT_UNLESS( ringbuf_read_to(s_handle, rxmsg, POOL_SIZE, '\n') );
+	TEST_ASSERT_EQUAL_UINT32( strlen(txmsg), ringbuf_write(s_handle, txmsg, strlen(txmsg)) );
+	TEST_ASSERT_EQUAL_UINT32( strlen(expect), ringbuf_read_to(s_handle, rxmsg, POOL_SIZE, '\n') );
 
 	TEST_ASSERT_EQUAL_STRING( expect, rxmsg );
 }
@@ -91,7 +91,7 @@ TEST(ringbuffer, size)
 	TEST_ASSERT_EQUAL_UINT32( s_poolsize, ringbuf_available(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( 0, ringbuf_used(s_handle) );
 
-	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, txdata, 30) );
+	TEST_ASSERT_EQUAL_UINT32( 30, ringbuf_write(s_handle, txdata, 30) );
 	TEST_ASSERT_EQUAL_UINT32( s_poolsize - 30, ringbuf_available(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( 30, ringbuf_used(s_handle) );
 }
@@ -106,7 +106,7 @@ TEST(ringbuffer, purge)
 	TEST_ASSERT_EQUAL_UINT32( s_poolsize, ringbuf_available(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( 0, ringbuf_used(s_handle) );
 
-	TEST_ASSERT_UNLESS( ringbuf_write(s_handle, txdata, 30) );
+	TEST_ASSERT_EQUAL_UINT32( 30, ringbuf_write(s_handle, txdata, 30) );
 	TEST_ASSERT_EQUAL_UINT32( s_poolsize - 30, ringbuf_available(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( 30, ringbuf_used(s_handle) );
 

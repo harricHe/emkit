@@ -51,7 +51,6 @@ handle_t ringbuf_create(void *memory, size_t size)
 	return (handle_t)base;
 }
 
-
 error_t ringbuf_destroy(handle_t hdl)
 {
 	ringbuf_t *base = (ringbuf_t*)hdl;
@@ -62,7 +61,6 @@ error_t ringbuf_destroy(handle_t hdl)
 	base->signeture = NULL_SIGNATURE;
 	return 0;
 }
-
 
 static error_t rb_write(ringbuf_t *base, const void *data, size_t size)
 {
@@ -85,17 +83,18 @@ static error_t rb_write(ringbuf_t *base, const void *data, size_t size)
 	} else {
 		base->used += size;
 	}
-	return 0;
+	return size;
 }
 
-error_t ringbuf_write(handle_t hdl, const void *data, size_t size)
+size_t ringbuf_write(handle_t hdl, const void *data, size_t size)
 {
 	ringbuf_t *base = (ringbuf_t*)hdl;
-	if (!base) return -1;
-	if (!data) return -1;
-	if (!size) return -1;
+	if (!base) return 0;
+	if (!data) return 0;
+	if (!size) return 0;
+	if (!size > base->capacity) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
-		return -1;
+		return 0;
 
 	return rb_write(base, data, size);
 }
@@ -120,17 +119,18 @@ static size_t rb_read(ringbuf_t *base, void *data, size_t size)
 	}
 
 	base->used -= asize;
-	return 0;
+	return asize;
 }
 
 size_t ringbuf_read(handle_t hdl, void *data, size_t size)
 {
 	ringbuf_t *base = (ringbuf_t*)hdl;
-	if (!base) return -1;
-	if (!data) return -1;
-	if (!size) return -1;
+	if (!base) return 0;
+	if (!data) return 0;
+	if (!size) return 0;
+	if (!size > base->capacity) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
-		return -1;
+		return 0;
 
 	return rb_read(base, data, size);
 }
@@ -143,11 +143,11 @@ size_t ringbuf_read_to(handle_t hdl, void *data, size_t size, uint8_t token)
 	size_t headlen;
 	size_t taillen;
 	int32_t i;
-	if (!base) return -1;
-	if (!data) return -1;
-	if (!size) return -1;
+	if (!base) return 0;
+	if (!data) return 0;
+	if (!size) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
-		return -1;
+		return 0;
 
 	asize = ((base->capacity - base->used) > size)
 		? size : (base->capacity - base->used);
