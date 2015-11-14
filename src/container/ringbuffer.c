@@ -11,19 +11,19 @@ typedef struct {
 	uint8_t *wp;
 	size_t  capacity;
 	size_t  used;
-} ringbuf_t;
+} base_t;
 
 
-static ringbuf_t* get_object(void)
+static base_t* get_object(void)
 {
-	static ringbuf_t objs[CONFIG_NUMOF_RINGBUFFERS];
+	static base_t objs[CONFIG_NUMOF_RINGBUFFER_HANDLES];
 	static bool_t has_inited = 0;
 	int32_t i;
 	if (!has_inited) {
 		memset(objs, 0, sizeof(objs));
 		has_inited = 1;
 	}
-	for (i=0; i<CONFIG_NUMOF_RINGBUFFERS; i++) {
+	for (i=0; i<CONFIG_NUMOF_RINGBUFFER_HANDLES; i++) {
 		if (objs[i].signeture == NULL_SIGNATURE) {
 			return &objs[i];
 		}
@@ -33,7 +33,7 @@ static ringbuf_t* get_object(void)
 
 handle_t ringbuf_create(void *memory, size_t size)
 {
-	ringbuf_t* base;
+	base_t* base;
 	if (!memory) return NULL;
 	if (!size)   return NULL;
 
@@ -53,7 +53,7 @@ handle_t ringbuf_create(void *memory, size_t size)
 
 error_t ringbuf_destroy(handle_t hdl)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return -1;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return -1;
@@ -62,7 +62,7 @@ error_t ringbuf_destroy(handle_t hdl)
 	return 0;
 }
 
-static error_t rb_write(ringbuf_t *base, const void *data, size_t size)
+static error_t rb_write(base_t *base, const void *data, size_t size)
 {
 	size_t taillen = base->buffer_end - base->wp;
 	const uint8_t *p = (const uint8_t*)data;
@@ -88,7 +88,7 @@ static error_t rb_write(ringbuf_t *base, const void *data, size_t size)
 
 size_t ringbuf_write(handle_t hdl, const void *data, size_t size)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (!data) return 0;
 	if (!size) return 0;
@@ -99,7 +99,7 @@ size_t ringbuf_write(handle_t hdl, const void *data, size_t size)
 	return rb_write(base, data, size);
 }
 
-static size_t rb_read(ringbuf_t *base, void *data, size_t size)
+static size_t rb_read(base_t *base, void *data, size_t size)
 {
 	uint8_t *p = (uint8_t*)data;
 	size_t taillen;
@@ -123,7 +123,7 @@ static size_t rb_read(ringbuf_t *base, void *data, size_t size)
 
 size_t ringbuf_read(handle_t hdl, void *data, size_t size)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (!data) return 0;
 	if (!size) return 0;
@@ -136,7 +136,7 @@ size_t ringbuf_read(handle_t hdl, void *data, size_t size)
 
 size_t ringbuf_read_to(handle_t hdl, void *data, size_t size, uint8_t token)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	uint8_t *p;
 	size_t asize;
 	size_t headlen;
@@ -175,7 +175,7 @@ size_t ringbuf_read_to(handle_t hdl, void *data, size_t size, uint8_t token)
 
 size_t ringbuf_available(handle_t hdl)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return 0;
@@ -184,7 +184,7 @@ size_t ringbuf_available(handle_t hdl)
 
 size_t ringbuf_used(handle_t hdl)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return 0;
@@ -193,7 +193,7 @@ size_t ringbuf_used(handle_t hdl)
 
 size_t ringbuf_capacity(handle_t hdl)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return 0;
@@ -202,7 +202,7 @@ size_t ringbuf_capacity(handle_t hdl)
 
 error_t ringbuf_purge(handle_t hdl)
 {
-	ringbuf_t *base = (ringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return -1;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return -1;

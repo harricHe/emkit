@@ -12,19 +12,19 @@ typedef struct {
 	size_t  blksz;
 	size_t  blkcnt;
 	size_t  used;
-} fixringbuf_t;
+} base_t;
 
 
-static fixringbuf_t* get_object(void)
+static base_t* get_object(void)
 {
-	static fixringbuf_t objs[CONFIG_NUMOF_FIXEDRINGBUFFERS];
+	static base_t objs[CONFIG_NUMOF_FIXEDRINGBUFFER_HANDLES];
 	static bool_t has_inited = 0;
 	int32_t i;
 	if (!has_inited) {
 		memset(objs, 0, sizeof(objs));
 		has_inited = 1;
 	}
-	for (i=0; i<CONFIG_NUMOF_FIXEDRINGBUFFERS; i++) {
+	for (i=0; i<CONFIG_NUMOF_FIXEDRINGBUFFER_HANDLES; i++) {
 		if (objs[i].signeture == NULL_SIGNATURE) {
 			return &objs[i];
 		}
@@ -33,7 +33,7 @@ static fixringbuf_t* get_object(void)
 }
 
 
-static inline uint8_t* step_pointer(const fixringbuf_t *base, const uint8_t *p)
+static inline uint8_t* step_pointer(const base_t *base, const uint8_t *p)
 {
 	p += base->blksz;
 	if (p >= base->buffer_end) {
@@ -44,7 +44,7 @@ static inline uint8_t* step_pointer(const fixringbuf_t *base, const uint8_t *p)
 
 handle_t fixedringbuf_create(void *memory, size_t blksz, size_t blkcnt)
 {
-	fixringbuf_t *base;
+	base_t *base;
 	if (!memory) return NULL;
 	if (!blksz)  return NULL;
 	if (!blkcnt) return NULL;
@@ -67,7 +67,7 @@ handle_t fixedringbuf_create(void *memory, size_t blksz, size_t blkcnt)
 
 error_t fixedringbuf_destroy(handle_t hdl)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return -1;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
 		return -1;
@@ -79,7 +79,7 @@ error_t fixedringbuf_destroy(handle_t hdl)
 
 error_t fixedringbuf_write(handle_t hdl, const void *block)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base)  return -1;
 	if (!block) return -1;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
@@ -99,7 +99,7 @@ error_t fixedringbuf_write(handle_t hdl, const void *block)
 
 error_t fixedringbuf_read(handle_t hdl, void *block)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base)  return -1;
 	if (!block) return -1;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
@@ -114,7 +114,7 @@ error_t fixedringbuf_read(handle_t hdl, void *block)
 
 void* fixedringbuf_get(handle_t hdl)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	void *p;
 	if (!base) return NULL;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
@@ -129,7 +129,7 @@ void* fixedringbuf_get(handle_t hdl)
 
 size_t fixedringbuf_available(handle_t hdl)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
 		return 0;
@@ -139,7 +139,7 @@ size_t fixedringbuf_available(handle_t hdl)
 
 size_t fixedringbuf_used(handle_t hdl)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
 		return 0;
@@ -149,7 +149,7 @@ size_t fixedringbuf_used(handle_t hdl)
 
 size_t fixedringbuf_capacity(handle_t hdl)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
 		return 0;
@@ -159,7 +159,7 @@ size_t fixedringbuf_capacity(handle_t hdl)
 
 error_t fixedringbuf_purge(handle_t hdl)
 {
-	fixringbuf_t *base = (fixringbuf_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return -1;
 	if (base->signeture != FIXED_RINGBUFFER_SIGNATURE)
 		return -1;

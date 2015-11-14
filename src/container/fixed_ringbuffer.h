@@ -7,7 +7,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define CONFIG_NUMOF_FIXEDRINGBUFFERS (3)
+#define CONFIG_NUMOF_FIXEDRINGBUFFER_HANDLES (2)
 
 handle_t fixedringbuf_create(void *memory, size_t blksz, size_t blkcnt);
 error_t fixedringbuf_destroy(handle_t hdl);

@@ -18,18 +18,19 @@ typedef struct {
 	size_t  ava_blks;
 	size_t  blksz;
 	size_t  blkcnt;
-} fixedmpool_t;
+} base_t;
 
 
-static fixedmpool_t* get_object(void) {
-	static fixedmpool_t objs[CONFIG_NUMOF_FIXEDMEMORYPOOLS];
+static base_t* get_object(void)
+{
+	static base_t objs[CONFIG_NUMOF_FIXEDMEMORYPOOL_HANDLES];
 	static bool_t has_inited = 0;
 	int32_t i;
 	if (!has_inited) {
 		memset(objs, 0, sizeof(objs));
 		has_inited = 1;
 	}
-	for (i=0; i<CONFIG_NUMOF_FIXEDMEMORYPOOLS; i++) {
+	for (i=0; i<CONFIG_NUMOF_FIXEDMEMORYPOOL_HANDLES; i++) {
 		if (objs[i].signature == NULL_SIGNATURE)
 			return &objs[i];
 	}
@@ -37,7 +38,7 @@ static fixedmpool_t* get_object(void) {
 }
 
 
-static void initialize_blocks(fixedmpool_t *base, void *memory, size_t blksz, size_t blkcnt)
+static void initialize_blocks(base_t *base, void *memory, size_t blksz, size_t blkcnt)
 {
 	block_t *blk;
 	uint8_t *p;
@@ -62,7 +63,7 @@ static void initialize_blocks(fixedmpool_t *base, void *memory, size_t blksz, si
 
 handle_t fixedmpool_create(void *memory, size_t blksz, size_t blkcnt)
 {
-	fixedmpool_t *base;
+	base_t *base;
 	if (!memory) return NULL;
 	if (!blkcnt) return NULL;
 	if (blksz <= sizeof(blockheader_t)) return NULL;
@@ -79,7 +80,7 @@ handle_t fixedmpool_create(void *memory, size_t blksz, size_t blkcnt)
 
 error_t fixedmpool_destroy(handle_t hdl)
 {
-	fixedmpool_t *base = (fixedmpool_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return -1;
 	if (base->signature != FIXED_MEMORYPOOL_SIGNATURE)
 		return -1;
@@ -89,7 +90,7 @@ error_t fixedmpool_destroy(handle_t hdl)
 }
 
 
-static void* allocate_block(fixedmpool_t *base)
+static void* allocate_block(base_t *base)
 {
 	block_t *blk;
 	if (!base->free) {
@@ -104,7 +105,7 @@ static void* allocate_block(fixedmpool_t *base)
 }
 
 
-static error_t free_block(fixedmpool_t *base, void *data)
+static error_t free_block(base_t *base, void *data)
 {
 	block_t *blk = (block_t*)((uint8_t*)data - sizeof(blockheader_t));
 	if (!blk->header.using)
@@ -120,7 +121,7 @@ static error_t free_block(fixedmpool_t *base, void *data)
 
 void* fixedmpool_allocate(handle_t hdl)
 {
-	fixedmpool_t *base = (fixedmpool_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return NULL;
 	if (base->signature != FIXED_MEMORYPOOL_SIGNATURE)
 		return NULL;
@@ -131,7 +132,7 @@ void* fixedmpool_allocate(handle_t hdl)
 
 error_t fixedmpool_free(handle_t hdl, void *block)
 {
-	fixedmpool_t *base = (fixedmpool_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return -1;
 	if (base->signature != FIXED_MEMORYPOOL_SIGNATURE)
 		return -1;
@@ -142,7 +143,7 @@ error_t fixedmpool_free(handle_t hdl, void *block)
 
 size_t fixedmpool_available_blocks(handle_t hdl)
 {
-	fixedmpool_t *base = (fixedmpool_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signature != FIXED_MEMORYPOOL_SIGNATURE)
 		return 0;
@@ -153,7 +154,7 @@ size_t fixedmpool_available_blocks(handle_t hdl)
 
 size_t fixedmpool_used_blocks(handle_t hdl)
 {
-	fixedmpool_t *base = (fixedmpool_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signature != FIXED_MEMORYPOOL_SIGNATURE)
 		return 0;
@@ -164,7 +165,7 @@ size_t fixedmpool_used_blocks(handle_t hdl)
 
 size_t fixedmpool_blockdata_size(handle_t hdl)
 {
-	fixedmpool_t *base = (fixedmpool_t*)hdl;
+	base_t *base = (base_t*)hdl;
 	if (!base) return 0;
 	if (base->signature != FIXED_MEMORYPOOL_SIGNATURE)
 		return 0;

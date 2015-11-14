@@ -7,7 +7,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-#define CONFIG_NUMOF_FIXEDMEMORYPOOLS (10)
+#define CONFIG_NUMOF_FIXEDMEMORYPOOL_HANDLES (2)
 
 handle_t fixedmpool_create(void *memory, size_t blksz, size_t blkcnt);
 error_t fixedmpool_destroy(handle_t hdl);
