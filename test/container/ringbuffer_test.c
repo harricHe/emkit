@@ -170,11 +170,11 @@ TEST(ringbuffer, read_to_not_found)
 TEST_GROUP_RUNNER(ringbuffer)
 {
 	/* normal tests */
-    RUN_TEST_CASE(ringbuffer, create);
-    RUN_TEST_CASE(ringbuffer, destroy);
+	RUN_TEST_CASE(ringbuffer, create);
+	RUN_TEST_CASE(ringbuffer, destroy);
 	RUN_TEST_CASE(ringbuffer, write_read);
 	RUN_TEST_CASE(ringbuffer, read_to)
-	RUN_TEST_CASE(ringbuffer, size);
+		RUN_TEST_CASE(ringbuffer, size);
 	RUN_TEST_CASE(ringbuffer, purge);
 
 	/* abnormal tests */

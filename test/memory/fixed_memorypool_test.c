@@ -171,11 +171,11 @@ TEST(fixed_memorypool, size)
 
 TEST_GROUP_RUNNER(fixed_memorypool)
 {
-    RUN_TEST_CASE(fixed_memorypool, create);
-    RUN_TEST_CASE(fixed_memorypool, destroy);
-    RUN_TEST_CASE(fixed_memorypool, blockdata_size);
-    RUN_TEST_CASE(fixed_memorypool, allocate);
-    RUN_TEST_CASE(fixed_memorypool, free);
-    RUN_TEST_CASE(fixed_memorypool, size);
+	RUN_TEST_CASE(fixed_memorypool, create);
+	RUN_TEST_CASE(fixed_memorypool, destroy);
+	RUN_TEST_CASE(fixed_memorypool, blockdata_size);
+	RUN_TEST_CASE(fixed_memorypool, allocate);
+	RUN_TEST_CASE(fixed_memorypool, free);
+	RUN_TEST_CASE(fixed_memorypool, size);
 }
 
