@@ -106,8 +106,7 @@ static size_t rb_read(ringbuf_t *base, void *data, size_t size)
 	size_t asize;
 
 	taillen = base->buffer_end - base->rp;
-	asize = ((base->capacity - base->used) > size)
-		? size : (base->capacity - base->used);
+	asize = (base->used > size) ? size : base->used;
 	if (base->rp < base->wp) {
 		memcpy(p, base->rp, asize);
 		base->rp += asize;

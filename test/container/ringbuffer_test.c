@@ -115,6 +115,47 @@ TEST(ringbuffer, purge)
 	TEST_ASSERT_EQUAL_UINT32( 0, ringbuf_used(s_handle) );
 }
 
+
+TEST(ringbuffer, read_underflow)
+{
+	uint8_t txdata[POOL_SIZE];
+	uint8_t rxdata[POOL_SIZE];
+	int32_t i;
+
+	s_handle = ringbuf_create(s_pool, s_poolsize);
+	TEST_ASSERT_NOT_NULL( s_handle );
+
+	// prepare data
+	for (i=0; i<POOL_SIZE; i++) {
+		txdata[i] = i;
+	}
+
+	TEST_ASSERT_EQUAL_UINT32( 30, ringbuf_write(s_handle, txdata, 30) );
+	TEST_ASSERT_EQUAL_UINT32( 20, ringbuf_read(s_handle, rxdata, 20) );
+	TEST_ASSERT_EQUAL_UINT8_ARRAY( txdata, rxdata, 20 ); 
+
+	/* read underflow */
+	TEST_ASSERT_EQUAL_UINT32( 10, ringbuf_read(s_handle, rxdata, 30) );
+	TEST_ASSERT_EQUAL_UINT8_ARRAY( &txdata[20], rxdata, 10 ); 
+}
+
+
+TEST(ringbuffer, read_to_not_found)
+{
+	const char *txmsg = "Hello world!\nGoodbye thank you!";
+	char rxmsg[POOL_SIZE] = { 0 };
+
+	s_handle = ringbuf_create(s_pool, s_poolsize);
+	TEST_ASSERT_NOT_NULL( s_handle );
+
+	TEST_ASSERT_EQUAL_UINT32( strlen(txmsg), ringbuf_write(s_handle, txmsg, strlen(txmsg)) );
+	/* search non-existent token */
+	TEST_ASSERT_EQUAL_UINT32( strlen(txmsg), ringbuf_read_to(s_handle, rxmsg, POOL_SIZE, '\r') );
+
+	TEST_ASSERT_EQUAL_STRING( txmsg, rxmsg );
+}
+
+
 TEST_GROUP_RUNNER(ringbuffer)
 {
 	/* normal tests */
@@ -124,5 +165,9 @@ TEST_GROUP_RUNNER(ringbuffer)
 	RUN_TEST_CASE(ringbuffer, read_to)
 	RUN_TEST_CASE(ringbuffer, size);
 	RUN_TEST_CASE(ringbuffer, purge);
+
+	/* abnormal tests */
+	RUN_TEST_CASE(ringbuffer, read_underflow);
+	RUN_TEST_CASE(ringbuffer, read_to_not_found);
 }
 
