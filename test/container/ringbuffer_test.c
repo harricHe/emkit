@@ -120,6 +120,7 @@ TEST(ringbuffer, read_underflow)
 {
 	uint8_t txdata[POOL_SIZE];
 	uint8_t rxdata[POOL_SIZE];
+	uint8_t *rp;
 	int32_t i;
 
 	s_handle = ringbuf_create(s_pool, s_poolsize);
@@ -137,6 +138,16 @@ TEST(ringbuffer, read_underflow)
 	/* read underflow */
 	TEST_ASSERT_EQUAL_UINT32( 10, ringbuf_read(s_handle, rxdata, 30) );
 	TEST_ASSERT_EQUAL_UINT8_ARRAY( &txdata[20], rxdata, 10 ); 
+
+	/* read overrun */
+	memset(rxdata, 0, POOL_SIZE);
+	TEST_ASSERT_EQUAL_UINT32( 50, ringbuf_write(s_handle, txdata, 50) );
+	TEST_ASSERT_EQUAL_UINT32( 50, ringbuf_read(s_handle, rxdata, 60) );
+	TEST_ASSERT_EQUAL_UINT8_ARRAY( txdata, rxdata, 50 ); 
+	rp = &rxdata[50];
+	for (i=0; i<POOL_SIZE - 50; i++) {
+		TEST_ASSERT_EQUAL_UINT8( 0, rp[i] ); 
+	}
 }
 
 

@@ -111,7 +111,7 @@ static size_t rb_read(ringbuf_t *base, void *data, size_t size)
 		memcpy(p, base->rp, asize);
 		base->rp += asize;
 	} else {
-		size_t headlen = size - taillen;
+		size_t headlen = asize - taillen;
 		memcpy(p, base->rp, taillen);
 		memcpy(&p[taillen], base->buffer_start, headlen);
 		base->rp = base->buffer_start + headlen;
@@ -141,42 +141,36 @@ size_t ringbuf_read_to(handle_t hdl, void *data, size_t size, uint8_t token)
 	size_t asize;
 	size_t headlen;
 	size_t taillen;
-	int32_t i;
 	if (!base) return 0;
 	if (!data) return 0;
 	if (!size) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return 0;
 
-	asize = ((base->capacity - base->used) > size)
-		? size : (base->capacity - base->used);
+	asize = (base->used > size) ? size : base->used;
 
-	taillen = base->buffer_end - base->rp; 
-	p = base->rp;
-	for (i=0; i<(int32_t)taillen; i++) {
-		if (p[i] == token) {
-			return rb_read(base, data, i+1);
-		}
-		asize--;
-		if (!asize) {
-			/* not found */
-			return rb_read(base, data, size);
+	taillen = base->buffer_end - base->rp;
+	if (taillen > asize) {
+		taillen = asize;
+	}
+	headlen = asize - taillen;
+
+	if (taillen) {
+		p = memchr(base->rp, token, taillen);
+		if (p) {
+			return rb_read(base, data, (p - base->rp) + 1);
 		}
 	}
 
-	headlen = size - taillen;
-	p = base->buffer_start;
-	for (i=0; i<(int32_t)headlen; i++) {
-		if (p[i] == token) {
-			return rb_read(base, data, taillen+i+1);
-		}
-		asize--;
-		if (asize) {
-			return rb_read(base, data, size);
+	if (headlen) {
+		p = memchr(base->buffer_start, token, headlen);
+		if (p) {
+			return rb_read(base, data, (p - base->buffer_start) + 1);
 		}
 	}
 
-	return 0;
+	/* not found */
+	return rb_read(base, data, size);
 }
 
 size_t ringbuf_available(handle_t hdl)
