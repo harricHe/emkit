@@ -8,14 +8,16 @@ extern "C" {
 #endif /* __cplusplus */
 
 #define CONFIG_NUMOF_COMMAND_HANDLES (2)
-#define COMMAND_UNIT_SIZE (16)
-#define COMMAND_NAME_SIZE (8)
+// TODO: this size depends platform
+#define COMMAND_UNIT_SIZE (24)
 
-typedef error_t (*commandfunc_t)(int32_t argc, const char **argv);
+typedef error_t (*command_func_t)(int32_t argc, const char **argv);
+typedef error_t (*putc_func_t)(char c);
 
+error_t command_init(putc_func_t putc);
 handle_t command_create(void *memory, size_t size);
 error_t command_destroy(handle_t hdl);
-error_t command_add(handle_t hdl, const char *cmd, commandfunc_t func);
+error_t command_add(handle_t hdl, const char *cmd, command_func_t func, const char *description);
 error_t command_remove(handle_t hdl, const char *cmd);
 error_t command_execute(handle_t hdl, int32_t argc, const char **argv);
 

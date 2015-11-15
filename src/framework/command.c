@@ -4,8 +4,9 @@
 #define COMMAND_SIGNATURE PACK('c','m','n','d')
 
 typedef struct command {
-	char name[COMMAND_NAME_SIZE];
-	commandfunc_t func;
+	const char *name;
+	command_func_t func;
+	const char *description;
 } command_t;
 
 typedef struct {
@@ -14,6 +15,8 @@ typedef struct {
 	size_t cmdnum;
 	size_t cmdcap;
 } base_t;
+
+static putc_func_t put_char_func = NULL;
 
 // size check when pre-compile
 extern int dummy[(COMMAND_UNIT_SIZE == sizeof(command_t)) ? 1 : -1];
@@ -32,6 +35,13 @@ static base_t* get_object(void)
 			return &objs[i];
 	}
 	return NULL;
+}
+
+
+error_t command_init(putc_func_t putc)
+{
+	put_char_func = putc;
+	return 0;
 }
 
 
@@ -71,12 +81,14 @@ error_t command_destroy(handle_t hdl)
 	return 0;
 }
 
-static error_t cmd_add(base_t *base, const char *cmdname, commandfunc_t func)
+static error_t cmd_add(base_t *base, const char *cmdname, command_func_t func, const char *description)
 {
 	int32_t i;
 	command_t *cmd = base->cmdlist;
 
 	for (i=0; i<(int32_t)base->cmdcap; i++) {
+		if (!cmd[i].name) continue;
+
 		if (!strcmp(cmd[i].name, cmdname)) {
 			// already added
 			return -1;
@@ -84,9 +96,10 @@ static error_t cmd_add(base_t *base, const char *cmdname, commandfunc_t func)
 	}
 
 	for (i=0; i<(int32_t)base->cmdcap; i++) {
-		if (!cmd[i].func) {
-			strncpy(cmd[i].name, cmdname, COMMAND_NAME_SIZE);
+		if (!cmd[i].name) {
+			cmd[i].name = cmdname;
 			cmd[i].func = func;
+			cmd[i].description = description;
 			base->cmdnum++;
 			return 0;
 		}
@@ -95,7 +108,7 @@ static error_t cmd_add(base_t *base, const char *cmdname, commandfunc_t func)
 	return -1;
 }
 
-error_t command_add(handle_t hdl, const char *cmdname, commandfunc_t func)
+error_t command_add(handle_t hdl, const char *cmdname, command_func_t func, const char *description)
 {
 	base_t *base = (base_t*)hdl;
 	if (!base) return -1;
@@ -107,7 +120,7 @@ error_t command_add(handle_t hdl, const char *cmdname, commandfunc_t func)
 	if (base->signature != COMMAND_SIGNATURE)
 		return -1;
 
-	return cmd_add(base, cmdname, func);
+	return cmd_add(base, cmdname, func, description);
 }
 
 static error_t cmd_remove(base_t *base, const char *cmdname)
@@ -116,9 +129,12 @@ static error_t cmd_remove(base_t *base, const char *cmdname)
 	command_t *cmd = base->cmdlist;
 
 	for (i=0; i<(int32_t)base->cmdcap; i++) {
+		if (!cmd[i].name) continue;
+
 		if (!strcmp(cmd[i].name, cmdname)) {
-			cmd[i].name[0] = 0;
+			cmd[i].name = NULL;
 			cmd[i].func = NULL;
+			cmd[i].description = NULL;
 			base->cmdnum--;
 			return 0;
 		}
@@ -141,12 +157,48 @@ error_t command_remove(handle_t hdl, const char *cmdname)
 	return cmd_remove(base, cmdname);
 }
 
-static error_t cmd_execute(base_t *base, int32_t argc, const char **argv)
+static void buildin_help_command(base_t *base)
 {
-	int32_t i;
 	command_t *cmd = base->cmdlist;
+	const char *help_title = "command list\n";
+	const char *ph = help_title;
+	int32_t i;
+
+	if (!put_char_func)
+		return;
+
+	while (*ph) {
+		put_char_func(*(ph++));
+	}
 
 	for (i=0; i<(int32_t)base->cmdcap; i++) {
+		if (!cmd[i].name) continue;
+
+		{
+			const char *p = cmd[i].name;
+			while (*p) {
+				put_char_func(*(p++));
+			}
+		}
+		put_char_func('\t');
+		if (cmd[i].description) {
+			const char *p = cmd[i].description;
+			while (*p) {
+				put_char_func(*(p++));
+			}
+		}
+		put_char_func('\n');
+	}
+}
+
+static error_t cmd_execute(base_t *base, int32_t argc, const char **argv)
+{
+	command_t *cmd = base->cmdlist;
+	int32_t i;
+
+	for (i=0; i<(int32_t)base->cmdcap; i++) {
+		if (!cmd[i].name) continue;
+
 		if (!strcmp(cmd[i].name, argv[0])) {
 			if (!cmd[i].func) {
 				return -1;
@@ -154,6 +206,9 @@ static error_t cmd_execute(base_t *base, int32_t argc, const char **argv)
 			return cmd[i].func(argc, argv);
 		}
 	}
+
+	// help
+	buildin_help_command(base);
 
 	return -1;
 }
