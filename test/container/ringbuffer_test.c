@@ -173,8 +173,8 @@ TEST_GROUP_RUNNER(ringbuffer)
 	RUN_TEST_CASE(ringbuffer, create);
 	RUN_TEST_CASE(ringbuffer, destroy);
 	RUN_TEST_CASE(ringbuffer, write_read);
-	RUN_TEST_CASE(ringbuffer, read_to)
-		RUN_TEST_CASE(ringbuffer, size);
+	RUN_TEST_CASE(ringbuffer, read_to);
+	RUN_TEST_CASE(ringbuffer, size);
 	RUN_TEST_CASE(ringbuffer, purge);
 
 	/* abnormal tests */

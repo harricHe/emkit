@@ -9,6 +9,7 @@ INCLUDE_DIR += $(ROOT_DIR)/src/common
 SOURCES  = test_container.c
 SOURCES += fixed_ringbuffer_test.c
 SOURCES += ringbuffer_test.c
+SOURCES += stack_test.c
 
 include $(ROOT_DIR)/mk/defs.mk
 include $(ROOT_DIR)/mk/unity.mk
