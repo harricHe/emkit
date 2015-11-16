@@ -109,7 +109,7 @@ size_t stack_available(handle_t hdl)
 	if (base->signeture != STACK_SIGNATURE)
 		return 0;
 
-	return 0;
+	return base->buffer_end - base->sp;
 }
 
 size_t stack_used(handle_t hdl)
@@ -119,7 +119,7 @@ size_t stack_used(handle_t hdl)
 	if (base->signeture != STACK_SIGNATURE)
 		return 0;
 
-	return 0;
+	return base->sp - base->buffer_start;
 }
 
 size_t stack_capacity(handle_t hdl)
@@ -129,7 +129,7 @@ size_t stack_capacity(handle_t hdl)
 	if (base->signeture != STACK_SIGNATURE)
 		return 0;
 
-	return 0;
+	return base->buffer_end - base->buffer_start;
 }
 
 error_t stack_purge(handle_t hdl)
@@ -139,6 +139,7 @@ error_t stack_purge(handle_t hdl)
 	if (base->signeture != STACK_SIGNATURE)
 		return -1;
 
+	base->sp = base->buffer_start;
 	return 0;
 }
 

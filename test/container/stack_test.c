@@ -167,7 +167,7 @@ TEST(stack, purge)
 	size_t unitsz = 1;
 	size_t count = POOL_SIZE / unitsz;
 	uint8_t i;
-	size_t using = 0;
+	size_t using;
 	s_handle = stack_create(s_pool, unitsz, count);
 	TEST_ASSERT_NOT_NULL( s_handle );
 
@@ -176,6 +176,7 @@ TEST(stack, purge)
 	TEST_ASSERT_EQUAL_UINT32( 0, stack_used(s_handle) );
 
 	// push
+	using = 0;
 	for (i=0; i<count; i++) {
 		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 		using++;
@@ -189,6 +190,7 @@ TEST(stack, purge)
 	TEST_ASSERT_EQUAL_UINT32( 0, stack_used(s_handle) );
 
 	// push
+	using = 0;
 	for (i=0; i<count; i++) {
 		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 		using++;
@@ -206,7 +208,7 @@ TEST_GROUP_RUNNER(stack)
 	RUN_TEST_CASE(stack, push_pop2);
 	RUN_TEST_CASE(stack, push_pop4);
 	RUN_TEST_CASE(stack, push_pop8);
-	//RUN_TEST_CASE(stack, size);
-	//RUN_TEST_CASE(stack, purge);
+	RUN_TEST_CASE(stack, size);
+	RUN_TEST_CASE(stack, purge);
 }
 
