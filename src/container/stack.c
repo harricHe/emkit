@@ -32,12 +32,32 @@ static base_t* get_object(void)
 
 handle_t stack_create(void *memory, size_t unitsz, size_t cnt)
 {
-	return NULL;
+	base_t *base;
+	if (!memory) return NULL;
+	if (!unitsz) return NULL;
+	if (!cnt)    return NULL;
+
+	base = get_object();
+	if (!base) return NULL;
+
+	base->signeture = STACK_SIGNATURE;
+	base->buffer_start = memory;
+	base->buffer_end   = base->buffer_start + (unitsz * cnt);
+	base->sp = base->buffer_start;
+	base->unitsz = unitsz;
+
+	return (handle_t)base;
 }
 
 error_t stack_destroy(handle_t hdl)
 {
-	return -1;
+	base_t *base = (base_t*)hdl;
+	if (!base) return -1;
+	if (base->signeture != STACK_SIGNATURE)
+		return -1;
+
+	base->signeture = NULL_SIGNATURE;
+	return 0;
 }
 
 error_t stack_push(handle_t hdl, const void *data)

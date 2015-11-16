@@ -199,8 +199,8 @@ TEST(stack, purge)
 TEST_GROUP_RUNNER(stack)
 {
 	/* normal tests */
-	//RUN_TEST_CASE(stack, create);
-	//RUN_TEST_CASE(stack, destroy);
+	RUN_TEST_CASE(stack, create);
+	RUN_TEST_CASE(stack, destroy);
 	//RUN_TEST_CASE(stack, push_pop1);
 	//RUN_TEST_CASE(stack, push_pop2);
 	//RUN_TEST_CASE(stack, push_pop4);
