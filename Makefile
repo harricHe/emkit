@@ -16,7 +16,7 @@ TARGETS += framework
 TARGETS += memory
 # TARGETS += protocol
 # TARGETS += search
-# TARGETS += security
+TARGETS += security
 # TARGETS += sort
 # TARGETS += string
 
