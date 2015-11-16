@@ -1,5 +1,6 @@
 #include "unity_fixture.h"
 #include "stack.h"
+#include <stdio.h>
 
 TEST_GROUP(stack);
 
@@ -45,16 +46,16 @@ TEST(stack, push_pop1)
 	TEST_ASSERT_NOT_NULL( s_handle );
 
 	// push
-	for (i=0; i<(int32_t)count; i++) {
+	for (i=0; i<count; i++) {
 		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 	}
 	// overflow
 	TEST_ASSERT( stack_push(s_handle, &data) );
 
 	// pop
-	for (i=(int32_t)count-1; i>=0; i--) {
+	for (i=count; i>0; i--) {
 		TEST_ASSERT_EQUAL_PTR( &data, stack_pop(s_handle, &data) );
-		TEST_ASSERT_EQUAL_UINT8( i, data );
+		TEST_ASSERT_EQUAL_UINT8( i-1, data );
 	}
 	// underflow
 	TEST_ASSERT_EQUAL_PTR( NULL, stack_pop(s_handle, &data) );
@@ -65,19 +66,19 @@ TEST(stack, push_pop2)
 	size_t unitsz = 2;
 	size_t count = POOL_SIZE / unitsz;
 	uint16_t data;
-	int32_t i;
+	uint16_t i;
 	s_handle = stack_create(s_pool, unitsz, count);
 	TEST_ASSERT_NOT_NULL( s_handle );
 	for (i=0; i<(int32_t)count; i++) {
-		TEST_ASSERT_UNLESS( stack_push(s_handle, &data) );
+		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 	}
 	// overflow
 	TEST_ASSERT( stack_push(s_handle, &data) );
 
 	// pop
-	for (i=(int32_t)count-1; i>=0; i--) {
+	for (i=count; i>0; i--) {
 		TEST_ASSERT_EQUAL_PTR( &data, stack_pop(s_handle, &data) );
-		TEST_ASSERT_EQUAL_UINT8( i, data );
+		TEST_ASSERT_EQUAL_UINT16( i-1, data );
 	}
 	// underflow
 	TEST_ASSERT_EQUAL_PTR( NULL, stack_pop(s_handle, &data) );
@@ -88,19 +89,19 @@ TEST(stack, push_pop4)
 	size_t unitsz = 4;
 	size_t count = POOL_SIZE / unitsz;
 	uint32_t data;
-	int32_t i;
+	uint32_t i;
 	s_handle = stack_create(s_pool, unitsz, count);
 	TEST_ASSERT_NOT_NULL( s_handle );
-	for (i=0; i<(int32_t)count; i++) {
-		TEST_ASSERT_UNLESS( stack_push(s_handle, &data) );
+	for (i=0; i<count; i++) {
+		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 	}
 	// overflow
 	TEST_ASSERT( stack_push(s_handle, &data) );
 
 	// pop
-	for (i=(int32_t)count-1; i>=0; i--) {
+	for (i=count; i>0; i--) {
 		TEST_ASSERT_EQUAL_PTR( &data, stack_pop(s_handle, &data) );
-		TEST_ASSERT_EQUAL_UINT8( i, data );
+		TEST_ASSERT_EQUAL_UINT32( i-1, data );
 	}
 	// underflow
 	TEST_ASSERT_EQUAL_PTR( NULL, stack_pop(s_handle, &data) );
@@ -115,15 +116,15 @@ TEST(stack, push_pop8)
 	s_handle = stack_create(s_pool, unitsz, count);
 	TEST_ASSERT_NOT_NULL( s_handle );
 	for (i=0; i<(int32_t)count; i++) {
-		TEST_ASSERT_UNLESS( stack_push(s_handle, &data) );
+		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 	}
 	// overflow
 	TEST_ASSERT( stack_push(s_handle, &data) );
 
 	// pop
-	for (i=(int32_t)count-1; i>=0; i--) {
+	for (i=count; i>0; i--) {
 		TEST_ASSERT_EQUAL_PTR( &data, stack_pop(s_handle, &data) );
-		TEST_ASSERT_EQUAL_UINT8( i, data );
+		TEST_ASSERT_EQUAL_UINT8( i-1, data );
 	}
 	// underflow
 	TEST_ASSERT_EQUAL_PTR( NULL, stack_pop(s_handle, &data) );
@@ -152,10 +153,10 @@ TEST(stack, size)
 	}
 
 	// pop
-	for (i=(int32_t)count-1; i>=0; i--) {
+	for (i=count; i>0; i--) {
 		TEST_ASSERT_EQUAL_PTR( &data, stack_pop(s_handle, &data) );
 		using--;
-		TEST_ASSERT_EQUAL_UINT8( i, data );
+		TEST_ASSERT_EQUAL_UINT8( i-1, data );
 		TEST_ASSERT_EQUAL_UINT32( count - using, stack_available(s_handle) );
 		TEST_ASSERT_EQUAL_UINT32( using, stack_used(s_handle) );
 	}
@@ -175,7 +176,7 @@ TEST(stack, purge)
 	TEST_ASSERT_EQUAL_UINT32( 0, stack_used(s_handle) );
 
 	// push
-	for (i=0; i<(int32_t)count; i++) {
+	for (i=0; i<count; i++) {
 		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 		using++;
 		TEST_ASSERT_EQUAL_UINT32( count - using, stack_available(s_handle) );
@@ -188,7 +189,7 @@ TEST(stack, purge)
 	TEST_ASSERT_EQUAL_UINT32( 0, stack_used(s_handle) );
 
 	// push
-	for (i=0; i<(int32_t)count; i++) {
+	for (i=0; i<count; i++) {
 		TEST_ASSERT_UNLESS( stack_push(s_handle, &i) );
 		using++;
 		TEST_ASSERT_EQUAL_UINT32( count - using, stack_available(s_handle) );
@@ -201,10 +202,10 @@ TEST_GROUP_RUNNER(stack)
 	/* normal tests */
 	RUN_TEST_CASE(stack, create);
 	RUN_TEST_CASE(stack, destroy);
-	//RUN_TEST_CASE(stack, push_pop1);
-	//RUN_TEST_CASE(stack, push_pop2);
-	//RUN_TEST_CASE(stack, push_pop4);
-	//RUN_TEST_CASE(stack, push_pop8);
+	RUN_TEST_CASE(stack, push_pop1);
+	RUN_TEST_CASE(stack, push_pop2);
+	RUN_TEST_CASE(stack, push_pop4);
+	RUN_TEST_CASE(stack, push_pop8);
 	//RUN_TEST_CASE(stack, size);
 	//RUN_TEST_CASE(stack, purge);
 }

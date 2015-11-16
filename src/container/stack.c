@@ -8,7 +8,7 @@ typedef struct {
 	uint8_t *buffer_start;
 	uint8_t *buffer_end;
 	uint8_t *sp;
-	size_t  unitsz;
+	size_t   unitsz;
 } base_t;
 
 
@@ -60,33 +60,85 @@ error_t stack_destroy(handle_t hdl)
 	return 0;
 }
 
+static error_t push_data(base_t *base, const void *data)
+{
+	if ((base->sp + base->unitsz) > base->buffer_end)
+		return -1;
+
+	memcpy(base->sp, data, base->unitsz);
+	base->sp += base->unitsz;
+	return 0;
+}
+
 error_t stack_push(handle_t hdl, const void *data)
 {
-	return -1;
+	base_t *base = (base_t*)hdl;
+	if (!base) return -1;
+	if (!data) return -1;
+	if (base->signeture != STACK_SIGNATURE)
+		return -1;
+
+	return push_data(base, data);
+}
+
+static void* pop_data(base_t *base, void *data)
+{
+	if ((base->sp - base->unitsz) < base->buffer_start)
+		return NULL;
+
+	base->sp -= base->unitsz;
+	memcpy(data, base->sp, base->unitsz);
+	return data;
 }
 
 void* stack_pop(handle_t hdl, void *data)
 {
-	return NULL;
+	base_t *base = (base_t*)hdl;
+	if (!base) return NULL;
+	if (!data) return NULL;
+	if (base->signeture != STACK_SIGNATURE)
+		return NULL;
+
+	return pop_data(base, data);
 }
 
 size_t stack_available(handle_t hdl)
 {
+	base_t *base = (base_t*)hdl;
+	if (!base) return 0;
+	if (base->signeture != STACK_SIGNATURE)
+		return 0;
+
 	return 0;
 }
 
 size_t stack_used(handle_t hdl)
 {
+	base_t *base = (base_t*)hdl;
+	if (!base) return 0;
+	if (base->signeture != STACK_SIGNATURE)
+		return 0;
+
 	return 0;
 }
 
 size_t stack_capacity(handle_t hdl)
 {
+	base_t *base = (base_t*)hdl;
+	if (!base) return 0;
+	if (base->signeture != STACK_SIGNATURE)
+		return 0;
+
 	return 0;
 }
 
 error_t stack_purge(handle_t hdl)
 {
-	return -1;
+	base_t *base = (base_t*)hdl;
+	if (!base) return -1;
+	if (base->signeture != STACK_SIGNATURE)
+		return -1;
+
+	return 0;
 }
 
