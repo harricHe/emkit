@@ -42,7 +42,7 @@ emkit
 - search
 	- [ ] binaysearch
 - security
-	- [ ] checksum
+	- [x] checksum
 	- [ ] crc
 - sort
 	- [ ] mergesort
