@@ -24,7 +24,7 @@ emkit
 	- [ ] priority_queue
 	- [ ] queue
 	- [x] ringbuffer
-	- [ ] stack
+	- [x] stack
 	- [ ] tree
 - framework
 	- [x] command
