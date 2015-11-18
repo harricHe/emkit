@@ -140,8 +140,8 @@ TEST(queue, purge)
 TEST_GROUP_RUNNER(queue)
 {
 	/* normal tests */
-	//RUN_TEST_CASE(queue, create);
-	//RUN_TEST_CASE(queue, destroy);
+	RUN_TEST_CASE(queue, create);
+	RUN_TEST_CASE(queue, destroy);
 	//RUN_TEST_CASE(queue, write_read);
 	//RUN_TEST_CASE(queue, get);
 	//RUN_TEST_CASE(queue, size);
