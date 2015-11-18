@@ -23,7 +23,7 @@ TEST_TEAR_DOWN(fixed_ringbuffer)
 TEST(fixed_ringbuffer, create)
 {
 	s_handle = fixedringbuf_create(s_pool, s_blocksize, s_blockcount);
-	TEST_ASSERT( s_handle );
+	TEST_ASSERT_NOT_NULL( s_handle );
 }
 
 TEST(fixed_ringbuffer, destroy)
