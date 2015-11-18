@@ -95,9 +95,9 @@ TEST(queue, size)
 		TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT - using, queue_available(s_handle) );
 		TEST_ASSERT_EQUAL_UINT32( using, queue_used(s_handle) );
 	}
-	TEST_ASSERT_EQUAL_UINT32( 0, queue_capacity(s_handle) );
+	TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT, queue_capacity(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT, queue_available(s_handle) );
-	TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT, queue_used(s_handle) );
+	TEST_ASSERT_EQUAL_UINT32( 0, queue_used(s_handle) );
 }
 
 TEST(queue, purge)
@@ -122,9 +122,10 @@ TEST(queue, purge)
 	TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT, queue_used(s_handle) );
 
 	TEST_ASSERT_UNLESS( queue_purge(s_handle) );
-	TEST_ASSERT_EQUAL_UINT32( 0, queue_capacity(s_handle) );
+	using = 0;
+	TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT, queue_capacity(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT, queue_available(s_handle) );
-	TEST_ASSERT_EQUAL_UINT32( BLOCK_COUNT, queue_used(s_handle) );
+	TEST_ASSERT_EQUAL_UINT32( 0, queue_used(s_handle) );
 
 	for (i=0; i<BLOCK_COUNT; i++) {
 		TEST_ASSERT_UNLESS( queue_write(s_handle, &i) );
@@ -142,10 +143,10 @@ TEST_GROUP_RUNNER(queue)
 	/* normal tests */
 	RUN_TEST_CASE(queue, create);
 	RUN_TEST_CASE(queue, destroy);
-	//RUN_TEST_CASE(queue, write_read);
-	//RUN_TEST_CASE(queue, get);
-	//RUN_TEST_CASE(queue, size);
-	//RUN_TEST_CASE(queue, purge);
+	RUN_TEST_CASE(queue, write_read);
+	RUN_TEST_CASE(queue, get);
+	RUN_TEST_CASE(queue, size);
+	RUN_TEST_CASE(queue, purge);
 }
 
 
