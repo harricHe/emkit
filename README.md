@@ -47,3 +47,7 @@ emkit
 	- [ ] quicksort
 - string
 	- [ ] string
+
+## License
+MIT-License.
+Please refer to LICENSE file.
