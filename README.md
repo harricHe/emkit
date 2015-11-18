@@ -30,8 +30,6 @@ emkit
 	- [x] command
 	- [ ] observer
 	- [ ] shell
-- log
-	- [ ] log
 - memory
 	- [x] fixed_memorypool
 	- [ ] memorypool

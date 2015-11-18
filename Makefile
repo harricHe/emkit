@@ -12,7 +12,6 @@ TARGETS =
 # TARGETS += bit
 TARGETS += container
 TARGETS += framework
-# TARGETS += log
 TARGETS += memory
 # TARGETS += protocol
 # TARGETS += search
