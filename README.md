@@ -22,7 +22,7 @@ emkit
 	- [ ] graph
 	- [ ] map
 	- [ ] priority_queue
-	- [ ] queue
+	- [x] queue
 	- [x] ringbuffer
 	- [x] stack
 	- [ ] tree
