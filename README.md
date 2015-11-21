@@ -21,7 +21,6 @@ emkit
 	- [x] fixed_ringbuffer
 	- [ ] graph
 	- [ ] map
-	- [ ] priority_queue
 	- [x] queue
 	- [x] ringbuffer
 	- [x] stack
