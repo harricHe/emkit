@@ -12,7 +12,6 @@ SOURCES += fixed_ringbuffer.c
 # SOURCES += list.c
 # SOURCES += map.c
 SOURCES += queue.c
-SOURCES += priority_queue.c
 SOURCES += stack.c
 # SOURCES += tree.c
 

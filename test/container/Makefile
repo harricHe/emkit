@@ -11,7 +11,6 @@ SOURCES += fixed_ringbuffer_test.c
 SOURCES += ringbuffer_test.c
 SOURCES += stack_test.c
 SOURCES += queue_test.c
-SOURCES += priority_queue_test.c
 
 include $(ROOT_DIR)/mk/defs.mk
 include $(ROOT_DIR)/mk/unity.mk
