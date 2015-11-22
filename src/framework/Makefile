@@ -7,7 +7,7 @@ INCLUDE_DIR += $(ROOT_DIR)/src/common
 
 SOURCES  = 
 SOURCES += command.c
-# SOURCES += shell.c
+SOURCES += shell.c
 # SOURCES += observer.c
 
 include $(ROOT_DIR)/mk/defs.mk
