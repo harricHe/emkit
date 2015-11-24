@@ -3,7 +3,7 @@
 static void runAllTests(void)
 {
     RUN_TEST_GROUP(command);
-    //RUN_TEST_GROUP(shell);
+    RUN_TEST_GROUP(shell);
     //RUN_TEST_GROUP(observer);
 }
 

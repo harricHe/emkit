@@ -10,7 +10,7 @@ LIBS = -l$(MODULE)
 
 SOURCES  = test_framework.c
 SOURCES += command_test.c
-# SOURCES += shell_test.c
+SOURCES += shell_test.c
 # SOURCES += observer_test.c
 
 include $(ROOT_DIR)/mk/defs.mk
