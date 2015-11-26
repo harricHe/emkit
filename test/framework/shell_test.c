@@ -18,7 +18,7 @@ static error_t stub_putc(char c) {
 	return 0;
 }
 
-static error_t stub_getc(char c) {
+static char stub_getc(void) {
 	return 0;
 }
 

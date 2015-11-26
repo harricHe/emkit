@@ -16,7 +16,7 @@ extern "C" {
 #define CONFIG_NUMOF_SHELL_HANDLES (1)
 
 typedef error_t (*putc_func_t)(char c);
-typedef error_t (*getc_func_t)(char c);
+typedef char (*getc_func_t)(void);
 typedef error_t (*shexe_func_t)(char *line);
 
 handle_t shell_create(void *memory, size_t size,
