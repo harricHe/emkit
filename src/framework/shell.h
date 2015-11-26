@@ -1,3 +1,9 @@
+/* This framework's responsibility is following.
+ * - echoback support
+ * - backspace support
+ * - command history suppoort
+ */
+
 #ifndef __SHELL_H__
 #define __SHELL_H__
 

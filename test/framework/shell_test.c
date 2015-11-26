@@ -1,11 +1,18 @@
 #include "unity_fixture.h"
 #include "shell.h"
+#include <pthread.h>
 
 TEST_GROUP(shell);
 
 static handle_t s_handle = NULL;
 #define POOL_SIZE 256
 static uint8_t s_pool[POOL_SIZE];
+struct stub_buffer {
+	char    buf[POOL_SIZE];
+	int32_t index;
+};
+static struct stub_buffer s_rx;
+pthread_mutex_t s_mutex;
 
 static error_t stub_putc(char c) {
 	return 0;
@@ -21,11 +28,14 @@ static error_t stub_exec(char *line) {
 
 TEST_SETUP(shell)
 {
+	s_rx.index = 0;
+	pthread_mutex_init(&s_mutex, NULL);
 }
 
 TEST_TEAR_DOWN(shell)
 {
 	shell_destroy(s_handle);
+	pthread_mutex_destroy(&s_mutex);
 }
 
 TEST(shell, create)
