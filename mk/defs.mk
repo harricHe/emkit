@@ -7,7 +7,7 @@ STRIP := strip
 CFLAGS  = -std=c99
 CFLAGS += -Wall
 CFLAGS += -Wextra
-# CFLAGS += -Werror
+CFLAGS += -Werror
 CFLAGS += -Wpointer-arith
 # CFLAGS += -Wcast-align
 CFLAGS += -Wwrite-strings
@@ -25,6 +25,7 @@ CFLAGS += -Wno-unused-parameter
 # CFLAGS += -Wfloat-equal
 CFLAGS += -pedantic-errors
 CFLAGS += -g -O0
+# CFLAGS += -O3 -flto
 CFLAGS += -MMD -MP
 ARFLAGS := crsv
 LDFLGAS := 
@@ -36,7 +37,7 @@ BUILD_LIB_DIR := $(BUILD_DIR)/lib
 BUILD_TEST_DIR := $(BUILD_DIR)/test
 INCLUDES = $(addprefix -I,$(INCLUDE_DIR))
 LIBDIRS = $(addprefix -L,$(BUILD_LIB_DIR))
-LIBS = -l$(MODULE)
+LIBS += -l$(MODULE)
 
 OBJECTS = $(addprefix $(BUILD_OBJ_DIR)/,$($(notdir SOURCES):.c=.o))
 DEPENDS = $(OBJECTS:.o=.d)

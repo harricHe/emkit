@@ -6,7 +6,7 @@ INCLUDE_DIR  = .
 INCLUDE_DIR += $(ROOT_DIR)/src/$(MODULE)
 INCLUDE_DIR += $(ROOT_DIR)/src/common
 
-LIBS = -l$(MODULE)
+LIBS = -lpthread
 
 SOURCES  = test_framework.c
 SOURCES += command_test.c

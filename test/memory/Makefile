@@ -6,8 +6,6 @@ INCLUDE_DIR  = .
 INCLUDE_DIR += $(ROOT_DIR)/src/$(MODULE)
 INCLUDE_DIR += $(ROOT_DIR)/src/common
 
-LIBS = -l$(MODULE)
-
 SOURCES  = test_memory.c
 SOURCES += fixed_memorypool_test.c
 # SOURCES += memorypool.c
