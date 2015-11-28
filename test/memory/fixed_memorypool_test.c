@@ -83,14 +83,13 @@ TEST(fixed_memorypool, free)
 {
 	uint8_t *p[BLOCK_COUNT];
 	uint8_t *q[BLOCK_COUNT];
-	size_t datasize, headersize;
+	size_t datasize;
 	int i;
 
 	s_handle = fixedmpool_create(s_pool, s_blocksize, s_blockcount);
 	TEST_ASSERT_NOT_NULL( s_handle );
 
 	datasize = fixedmpool_blockdata_size(s_handle);
-	headersize = s_blocksize - datasize;
 
 	for (i=0; i<(int)s_blockcount; i++) {
 		p[i] = q[i] = fixedmpool_allocate(s_handle);
