@@ -110,9 +110,9 @@ TEST(fixed_ringbuffer, size)
 	TEST_ASSERT_EQUAL_UINT32( s_blockcount - using, fixedringbuf_available(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( using, fixedringbuf_used(s_handle) );
 
-	rxp = fixedringbuf_get(s_handle); using--;
-	rxp = fixedringbuf_get(s_handle); using--;
-	rxp = fixedringbuf_get(s_handle); using--;
+	TEST_ASSERT_NOT_NULL( rxp = fixedringbuf_get(s_handle) ); using--;
+	TEST_ASSERT_NOT_NULL( rxp = fixedringbuf_get(s_handle) ); using--;
+	TEST_ASSERT_NOT_NULL( rxp = fixedringbuf_get(s_handle) ); using--;
 
 	TEST_ASSERT_EQUAL_UINT32( s_blockcount, fixedringbuf_capacity(s_handle) );
 	TEST_ASSERT_EQUAL_UINT32( s_blockcount - using, fixedringbuf_available(s_handle) );
