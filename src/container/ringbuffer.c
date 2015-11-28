@@ -92,7 +92,7 @@ size_t ringbuf_write(handle_t hdl, const void *data, size_t size)
 	if (!base) return 0;
 	if (!data) return 0;
 	if (!size) return 0;
-	if (!size > base->capacity) return 0;
+	if (size > base->capacity) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return 0;
 
@@ -127,7 +127,7 @@ size_t ringbuf_read(handle_t hdl, void *data, size_t size)
 	if (!base) return 0;
 	if (!data) return 0;
 	if (!size) return 0;
-	if (!size > base->capacity) return 0;
+	if (size > base->capacity) return 0;
 	if (base->signeture != RINGBUFFER_SIGNATURE)
 		return 0;
 
