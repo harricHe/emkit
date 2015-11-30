@@ -124,9 +124,16 @@ error_t shell_start(handle_t hdl)
 
 	while (1) {
 		size_t rlen;
-		write_line(base, base->prompt);
 
+		if (base->signature == NULL_SIGNATURE) {
+			break;
+		}
+
+		write_line(base, base->prompt);
 		rlen = read_line(base);
+		if (rlen == 0) {
+			continue;
+		}
 	}
 
 	return -1;
