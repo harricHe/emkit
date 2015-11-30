@@ -14,6 +14,7 @@ extern "C" {
 #endif /* __cplusplus */
 
 #define CONFIG_NUMOF_SHELL_HANDLES (1)
+#define SHELL_PROMPT_LEN (4)
 
 /* blocking I/O */
 typedef error_t (*putc_func_t)(char c);
@@ -25,6 +26,7 @@ handle_t shell_create(void *memory, size_t size,
 		getc_func_t getc,
 		shexe_func_t exec);
 error_t shell_destroy(handle_t hdl);
+error_t shell_set_prompt(handle_t hdl, const char *prompt);
 error_t shell_start(handle_t hdl);
 
 #ifdef __cplusplus

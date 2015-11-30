@@ -2,9 +2,12 @@
 #include <string.h>
 
 #define SHELL_SIGNATURE PACK('s','h','e','l')
+#define ASCII_BS 0x08
+#define SHELL_DEFAULT_PROMPT "$>"
 
 typedef struct {
 	uint32_t signature;
+	char prompt[SHELL_PROMPT_LEN];
 	putc_func_t  putc_func;
 	getc_func_t  getc_func;
 	shexe_func_t exec_func;
@@ -47,6 +50,7 @@ handle_t shell_create(void *memory, size_t size,
 	if (!base) return NULL;
 
 	base->signature = SHELL_SIGNATURE;
+	strncpy(base->prompt, SHELL_DEFAULT_PROMPT, SHELL_PROMPT_LEN-1);
 	base->putc_func = putc;
 	base->getc_func = getc;
 	base->exec_func = exec;
@@ -68,9 +72,63 @@ error_t shell_destroy(handle_t hdl)
 	return 0;
 }
 
+error_t shell_set_prompt(handle_t hdl, const char *prompt)
+{
+	base_t *base = (base_t*)hdl;
+	if (!base) return -1;
+	if (base->signature != SHELL_SIGNATURE)
+		return -1;
+	if (!prompt) return -1;
+	strncpy(base->prompt, prompt, SHELL_PROMPT_LEN-1);
+	return 0;
+}
+
+
+static size_t write_line(const base_t *base, const char *msg) {
+	const char *p = msg;
+	if (base->putc_func) {
+		while(*p) {
+			base->putc_func(*(p++));
+		}
+	}
+	return 0;
+}
+
+#if 0
+static void echoback(const base_t *base, char c) {
+	if (base->putc_func) {
+		base->putc_func(c);
+	}
+}
+
+static void backspace(const base_t *base)
+{
+	echoback(base, ASCII_BS);
+	echoback(base, ' ');
+	echoback(base, ASCII_BS);
+}
+#endif
+
+static size_t read_line(const base_t *base)
+{
+	return 0;
+}
+
 
 error_t shell_start(handle_t hdl)
 {
+	base_t *base = (base_t*)hdl;
+	if (!base) return -1;
+	if (base->signature != SHELL_SIGNATURE)
+		return -1;
+
+	while (1) {
+		size_t rlen;
+		write_line(base, base->prompt);
+
+		rlen = read_line(base);
+	}
+
 	return -1;
 }
 
