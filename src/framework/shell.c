@@ -16,6 +16,34 @@ typedef struct {
 } base_t;
 
 
+static bool_t ascii_is_graphic_char(char c) {
+	if ((c >= 0x20) && (c <= 0x7e)) {
+		return TRUE;
+	}
+	return FALSE;
+}
+
+static bool_t ascii_is_space(char c) {
+	switch (c) {
+		case 0x20: /* space */
+		case 0x09: /* horizontal tab */
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+static bool_t ascii_is_eol(char c) {
+	switch (c) {
+		case '\r':
+		case '\n':
+			return TRUE;
+		default:
+			return FALSE;
+	}
+}
+
+
 static base_t* get_object(void)
 {
 	static base_t objs[CONFIG_NUMOF_SHELL_HANDLES];
@@ -86,19 +114,14 @@ error_t shell_set_prompt(handle_t hdl, const char *prompt)
 
 static size_t write_line(const base_t *base, const char *msg) {
 	const char *p = msg;
-	if (base->putc_func) {
-		while(*p) {
-			base->putc_func(*(p++));
-		}
+	while(*p) {
+		base->putc_func(*(p++));
 	}
 	return 0;
 }
 
-#if 0
 static void echoback(const base_t *base, char c) {
-	if (base->putc_func) {
-		base->putc_func(c);
-	}
+	base->putc_func(c);
 }
 
 static void backspace(const base_t *base)
@@ -107,11 +130,46 @@ static void backspace(const base_t *base)
 	echoback(base, ' ');
 	echoback(base, ASCII_BS);
 }
-#endif
 
 static size_t read_line(const base_t *base)
 {
-	return 0;
+	char *p = base->line;
+	char * const head = base->line;
+	char * const tail = (char*)((size_t)base->line + base->len - 1);
+	*tail = '\0';
+
+	while (p < tail) {
+		char c = base->getc_func();
+		if (ascii_is_space(c)) {
+			if ((p > head) && (!ascii_is_space(*(p-1)))) {
+				/* no echoback if space is head or continuous space */
+				echoback(base, ' ');
+				*(p++) = c;
+			}
+		}
+		else if (ascii_is_graphic_char(c)) {
+			echoback(base, c);
+			*(p++) = c;
+		}
+		else if (c == ASCII_BS) {
+			if (p > head) {
+				backspace(base);
+				*p = '\0';
+				p--;
+			}
+		}
+		else if (ascii_is_eol(c)) {
+			echoback(base, '\n');
+			*p = '\0';
+			p++;
+			break;
+		}
+		else {
+			;
+		}
+	}
+
+	return (size_t)(p - head);
 }
 
 
@@ -123,6 +181,7 @@ error_t shell_start(handle_t hdl)
 		return -1;
 
 	while (1) {
+		error_t err;
 		size_t rlen;
 
 		if (base->signature == NULL_SIGNATURE) {
@@ -130,9 +189,16 @@ error_t shell_start(handle_t hdl)
 		}
 
 		write_line(base, base->prompt);
+
 		rlen = read_line(base);
 		if (rlen == 0) {
 			continue;
+		}
+		err = base->exec_func(base->line);
+		if (err == 0) {
+			write_line(base, "-> ok\n");
+		} else {
+			write_line(base, "-> ng\n");
 		}
 	}
 
