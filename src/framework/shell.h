@@ -28,6 +28,7 @@ handle_t shell_create(void *memory, size_t size,
 error_t shell_destroy(handle_t hdl);
 error_t shell_set_prompt(handle_t hdl, const char *prompt);
 error_t shell_start(handle_t hdl);
+error_t shell_result(handle_t hdl);
 
 #ifdef __cplusplus
 }

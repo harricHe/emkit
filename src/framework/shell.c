@@ -13,6 +13,7 @@ typedef struct {
 	shexe_func_t exec_func;
 	void  *line;
 	size_t len;
+	error_t last_result;
 } base_t;
 
 
@@ -84,6 +85,7 @@ handle_t shell_create(void *memory, size_t size,
 	base->exec_func = exec;
 	base->line = memory;
 	base->len  = size;
+	base->last_result = 0;
 
 	return (handle_t)base;
 }
@@ -195,13 +197,20 @@ error_t shell_start(handle_t hdl)
 			continue;
 		}
 		err = base->exec_func(base->line);
-		if (err == 0) {
-			write_line(base, "-> ok\n");
-		} else {
-			write_line(base, "-> ng\n");
-		}
+		base->last_result = err;
 	}
 
-	return -1;
+	return 0;
+}
+
+
+error_t shell_result(handle_t hdl)
+{
+	base_t *base = (base_t*)hdl;
+	if (!base) return -1;
+	if (base->signature != SHELL_SIGNATURE)
+		return -1;
+
+	return base->last_result;
 }
 
