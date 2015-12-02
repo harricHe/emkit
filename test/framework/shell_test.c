@@ -2,6 +2,8 @@
 #include "shell.h"
 #include <pthread.h>
 #include <string.h>
+#include <stdio.h>
+
 
 TEST_GROUP(shell);
 
@@ -11,21 +13,24 @@ static handle_t s_handle = NULL;
 static uint8_t s_pool[POOL_SIZE];
 char    s_rxbuf[LINE_SIZE];
 int32_t s_rxindex;
-char    s_txc;
+volatile char s_txc;
 pthread_t s_thread;
 pthread_mutex_t s_mutex;
 char    s_result_line[LINE_SIZE];
 
 static error_t stub_putc(char c) {
 	s_rxbuf[s_rxindex++] = c;
+	printf("%c", c);
 	return 0;
 }
 
 static char stub_getc(void) {
 	char c;
-	pthread_mutex_lock( &s_mutex );
+	while (!s_txc);
+
 	c = s_txc;
-	pthread_mutex_unlock( &s_mutex );
+
+	s_txc = 0;
 	return c;
 }
 
@@ -67,38 +72,32 @@ TEST(shell, destroy)
 
 static void* test_thread(void* args)
 {
+	s_handle = shell_create(s_pool, POOL_SIZE, stub_putc, stub_getc, stub_exec);
+	TEST_ASSERT_NOT_NULL( s_handle );
+
+	TEST_ASSERT_UNLESS( shell_start(s_handle) );
+	return NULL;
+}
+
+TEST(shell, start)
+{
 	char test_chars[] = {
 		'0', '1', '2', '3', '4', '5', '6', '7',
 		'8', '9', 'a', 'b', 'c', 'd', 'e', 'f',
 		'\n', 0
 	};
 	char *p = test_chars;
-	pthread_mutex_lock( &s_mutex );
 
-	TEST_ASSERT_UNLESS( shell_start(s_handle) );
+	pthread_create(&s_thread, NULL, test_thread, NULL);
 
-	while (p) {
+	while (*p) {
+		while (s_txc);
 		s_txc = *p++;
-		pthread_mutex_unlock( &s_mutex );
-		/* delay(1ms) */
-		pthread_mutex_lock( &s_mutex );
 	}
 
 	/* excludes new line code */
 	TEST_ASSERT_EQUAL_STRING_LEN(test_chars, s_rxbuf, strlen(test_chars) - 1);
 	TEST_ASSERT_EQUAL_STRING_LEN(test_chars, s_result_line, strlen(test_chars) - 1);
-
-	pthread_mutex_unlock( &s_mutex );
-
-	return NULL;
-}
-
-TEST(shell, start)
-{
-	s_handle = shell_create(s_pool, POOL_SIZE, stub_putc, stub_getc, stub_exec);
-	TEST_ASSERT_NOT_NULL( s_handle );
-
-	pthread_create(&s_thread, NULL, test_thread, NULL);
 
 	pthread_join(s_thread, NULL);
 }
