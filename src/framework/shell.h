@@ -19,16 +19,18 @@ extern "C" {
 /* blocking I/O */
 typedef error_t (*putc_func_t)(char c);
 typedef char (*getc_func_t)(void);
-typedef error_t (*shexe_func_t)(char *line);
+typedef error_t (*shexe_func_t)(const char *line);
+typedef void (*post_hook_t)(error_t err, const char *line);
 
 handle_t shell_create(void *memory, size_t size,
 		putc_func_t putc,
 		getc_func_t getc,
-		shexe_func_t exec);
+		shexe_func_t exec,
+		post_hook_t hook);
+
 error_t shell_destroy(handle_t hdl);
 error_t shell_set_prompt(handle_t hdl, const char *prompt);
 error_t shell_start(handle_t hdl);
-error_t shell_result(handle_t hdl);
 
 #ifdef __cplusplus
 }

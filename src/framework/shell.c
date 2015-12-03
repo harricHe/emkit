@@ -11,9 +11,9 @@ typedef struct {
 	putc_func_t  putc_func;
 	getc_func_t  getc_func;
 	shexe_func_t exec_func;
+	post_hook_t  hook;
 	void  *line;
 	size_t len;
-	error_t last_result;
 } base_t;
 
 
@@ -44,7 +44,6 @@ static bool_t ascii_is_eol(char c) {
 	}
 }
 
-
 static base_t* get_object(void)
 {
 	static base_t objs[CONFIG_NUMOF_SHELL_HANDLES];
@@ -62,11 +61,11 @@ static base_t* get_object(void)
 }
 
 
-
 handle_t shell_create(void *memory, size_t size,
 		putc_func_t putc,
 		getc_func_t getc,
-		shexe_func_t exec)
+		shexe_func_t exec,
+		post_hook_t hook)
 {
 	base_t *base;
 	if (!memory) return NULL;
@@ -83,9 +82,9 @@ handle_t shell_create(void *memory, size_t size,
 	base->putc_func = putc;
 	base->getc_func = getc;
 	base->exec_func = exec;
+	base->hook = hook;
 	base->line = memory;
 	base->len  = size;
-	base->last_result = 0;
 
 	return (handle_t)base;
 }
@@ -197,20 +196,11 @@ error_t shell_start(handle_t hdl)
 			continue;
 		}
 		err = base->exec_func(base->line);
-		base->last_result = err;
+		if (base->hook) {
+			base->hook(err, base->line);
+		}
 	}
 
 	return 0;
-}
-
-
-error_t shell_result(handle_t hdl)
-{
-	base_t *base = (base_t*)hdl;
-	if (!base) return -1;
-	if (base->signature != SHELL_SIGNATURE)
-		return -1;
-
-	return base->last_result;
 }
 
