@@ -28,7 +28,7 @@ emkit
 - framework
 	- [x] command
 	- [ ] observer
-	- [ ] shell
+	- [x] shell
 - memory
 	- [x] fixed_memorypool
 	- [ ] memorypool
