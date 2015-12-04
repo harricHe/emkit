@@ -13,9 +13,9 @@ static uint8_t s_pool[POOL_SIZE];
 static char s_rxbuf[LINE_SIZE];
 static int32_t s_rxindex;
 static volatile char s_txc;
-static volatile bool_t s_done = FALSE;
 static pthread_t s_thread;
 static pthread_mutex_t s_mutex;
+static pthread_cond_t s_cv;
 static char s_result_line[LINE_SIZE];
 static int32_t s_error = 0;
 
@@ -39,7 +39,9 @@ static char stub_getc(void) {
 static error_t stub_exec(const char *line) {
 	if (!line) return -1;
 	strcpy(s_result_line, line);
-	s_done = TRUE;
+	pthread_mutex_lock(&s_mutex);
+	pthread_cond_signal(&s_cv);
+	pthread_mutex_unlock(&s_mutex);
 	return 0;
 }
 
@@ -49,9 +51,9 @@ TEST_SETUP(shell)
 	memset(s_result_line, 0, sizeof(s_result_line));
 	s_rxindex = 0;
 	s_txc = 0;
-	s_done = FALSE;
 	s_error = 0;
 	pthread_mutex_init(&s_mutex, NULL);
+	pthread_cond_init(&s_cv, NULL);
 }
 
 TEST_TEAR_DOWN(shell)
@@ -114,7 +116,9 @@ TEST(shell, start)
 		s_txc = *p++;
 	}
 
-	while (!s_done);
+	pthread_mutex_lock(&s_mutex);
+	pthread_cond_wait(&s_cv, &s_mutex);
+	pthread_mutex_unlock(&s_mutex);
 
 	TEST_ASSERT_EQUAL_STRING_LEN(test_chars, s_rxbuf, strlen(test_chars));
 	/* excludes new line code */
@@ -136,7 +140,9 @@ static error_t stub_exec_ng(const char *line) {
 
 static void stub_post_hook(error_t err, const char *line) {
 	s_error = err;
-	s_done = TRUE;
+	pthread_mutex_lock(&s_mutex);
+	pthread_cond_signal(&s_cv);
+	pthread_mutex_unlock(&s_mutex);
 }
 
 TEST(shell, hook)
@@ -147,7 +153,6 @@ TEST(shell, hook)
 	char *p;
 
 	// OK hook
-	s_done = FALSE;
 	s_error = 1;
 	p = test_chars;
 	s_handle = shell_create(s_pool, POOL_SIZE,
@@ -158,7 +163,10 @@ TEST(shell, hook)
 		while (s_txc);
 		s_txc = *p++;
 	}
-	while (!s_done);
+
+	pthread_mutex_lock(&s_mutex);
+	pthread_cond_wait(&s_cv, &s_mutex);
+	pthread_mutex_unlock(&s_mutex);
 	TEST_ASSERT_EQUAL_INT32( 0, s_error );
 	TEST_ASSERT_UNLESS( shell_destroy(s_handle) );
 	s_txc = '\n';
@@ -166,7 +174,6 @@ TEST(shell, hook)
 
 
 	// NG hook
-	s_done = FALSE;
 	s_error = 0;
 	p = test_chars;
 	s_handle = shell_create(s_pool, POOL_SIZE,
@@ -177,7 +184,9 @@ TEST(shell, hook)
 		while (s_txc);
 		s_txc = *p++;
 	}
-	while (!s_done);
+	pthread_mutex_lock(&s_mutex);
+	pthread_cond_wait(&s_cv, &s_mutex);
+	pthread_mutex_unlock(&s_mutex);
 	TEST_ASSERT_EQUAL_INT32( -1, s_error );
 	TEST_ASSERT_UNLESS( shell_destroy(s_handle) );
 	s_txc = '\n';
