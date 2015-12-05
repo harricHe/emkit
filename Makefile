@@ -17,7 +17,7 @@ TARGETS += memory
 # TARGETS += search
 TARGETS += security
 # TARGETS += sort
-# TARGETS += string
+TARGETS += text
 
 .PHONY: all test clean testclean rebuild
 

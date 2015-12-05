@@ -7,9 +7,7 @@
 extern "C" {
 #endif /* __cplusplus */
 
-size_t string_length(const char8 *str);
-size_t string_copy(char8 *dst, const char8 *src);
-int32_t string_compare(const char8 *str1, const char8 *str2);
+char* text_separate(char *string, const char *separators);
 
 #ifdef __cplusplus
 }
