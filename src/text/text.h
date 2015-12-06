@@ -7,7 +7,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-char* text_separate(char *string, const char *separators);
+size_t text_words_num(char *string, size_t len, const char *separators);
+char* text_separate(char *string, size_t len, const char *separators);
 
 #ifdef __cplusplus
 }
