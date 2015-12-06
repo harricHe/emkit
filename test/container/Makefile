@@ -1,7 +1,6 @@
 MODULE := container
 ROOT_DIR := ../..
 
-INCLUDE_DIR  = 
 INCLUDE_DIR  = .
 INCLUDE_DIR += $(ROOT_DIR)/src/$(MODULE)
 INCLUDE_DIR += $(ROOT_DIR)/src/common
