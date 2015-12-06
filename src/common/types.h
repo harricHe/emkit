@@ -29,4 +29,8 @@ typedef void*            handle_t;
 #define UNPACK4(s) (char)(0xFF & (s))
 #define NULL_SIGNATURE 0x00000000
 
+/* blocking I/O */
+typedef char (*getc_func_t)(void);
+typedef error_t (*putc_func_t)(char c);
+
 #endif /* __TYPES_H__ */

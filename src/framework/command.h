@@ -12,7 +12,6 @@ extern "C" {
 #define COMMAND_UNIT_SIZE (24)
 
 typedef error_t (*command_func_t)(int32_t argc, const char **argv);
-typedef error_t (*putc_func_t)(char c);
 
 error_t command_init(putc_func_t putc);
 handle_t command_create(void *memory, size_t size);

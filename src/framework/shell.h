@@ -16,9 +16,6 @@ extern "C" {
 #define CONFIG_NUMOF_SHELL_HANDLES (1)
 #define SHELL_PROMPT_LEN (4)
 
-/* blocking I/O */
-typedef error_t (*putc_func_t)(char c);
-typedef char (*getc_func_t)(void);
 typedef error_t (*shexe_func_t)(const char *line);
 typedef void (*post_hook_t)(error_t err, const char *line);
 
