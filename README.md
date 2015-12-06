@@ -44,8 +44,8 @@ emkit
 - sort
 	- [ ] mergesort
 	- [ ] quicksort
-- string
-	- [ ] string
+- text
+	- [x] text
 
 ## License
 MIT-License.
