@@ -37,7 +37,9 @@ BUILD_LIB_DIR := $(BUILD_DIR)/lib
 BUILD_TEST_DIR := $(BUILD_DIR)/test
 INCLUDES = $(addprefix -I,$(INCLUDE_DIR))
 LIBDIRS = $(addprefix -L,$(BUILD_LIB_DIR))
+ifdef MODULE
 LIBS += -l$(MODULE)
+endif
 
 OBJECTS = $(addprefix $(BUILD_OBJ_DIR)/,$($(notdir SOURCES):.c=.o))
 DEPENDS = $(OBJECTS:.o=.d)

@@ -8,11 +8,10 @@ INCLUDE_DIR += $(ROOT_DIR)/src/text
 
 SOURCES  = shell_app.c
 
-include $(ROOT_DIR)/mk/defs.mk
-
-LIBS  =
-LIBS += -lframework
+LIBS  = -lframework
 LIBS += -ltext
+
+include $(ROOT_DIR)/mk/defs.mk
 
 BUILD_EXAMPLE_DIR = _build
 TARGET_EXAMPLE = $(BUILD_EXAMPLE_DIR)/$(EXAMPLE)
