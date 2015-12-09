@@ -5,6 +5,8 @@ INCLUDE_DIR  = .
 INCLUDE_DIR += $(ROOT_DIR)/src/$(MODULE)
 INCLUDE_DIR += $(ROOT_DIR)/src/common
 
+LIBS  = -l$(MODULE)
+
 SOURCES  = test_text.c
 SOURCES += text_test.c
 

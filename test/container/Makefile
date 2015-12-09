@@ -5,6 +5,8 @@ INCLUDE_DIR  = .
 INCLUDE_DIR += $(ROOT_DIR)/src/$(MODULE)
 INCLUDE_DIR += $(ROOT_DIR)/src/common
 
+LIBS  = -l$(MODULE)
+
 SOURCES  = test_container.c
 SOURCES += fixed_ringbuffer_test.c
 SOURCES += ringbuffer_test.c

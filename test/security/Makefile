@@ -6,6 +6,8 @@ INCLUDE_DIR  = .
 INCLUDE_DIR += $(ROOT_DIR)/src/$(MODULE)
 INCLUDE_DIR += $(ROOT_DIR)/src/common
 
+LIBS  = -l$(MODULE)
+
 SOURCES  = test_security.c
 SOURCES += checksum_test.c
 # SOURCES += crc_test.c
