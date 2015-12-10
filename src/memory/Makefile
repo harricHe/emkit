@@ -7,7 +7,7 @@ INCLUDE_DIR += $(ROOT_DIR)/src/common
 
 SOURCES  = 
 SOURCES += fixed_memorypool.c
-# SOURCES += memorypool.c
+SOURCES += memorypool.c
 
 include $(ROOT_DIR)/mk/defs.mk
 

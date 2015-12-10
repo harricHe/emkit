@@ -9,7 +9,7 @@ LIBS  = -l$(MODULE)
 
 SOURCES  = test_memory.c
 SOURCES += fixed_memorypool_test.c
-# SOURCES += memorypool.c
+SOURCES += memorypool_test.c
 
 include $(ROOT_DIR)/mk/defs.mk
 include $(ROOT_DIR)/mk/unity.mk

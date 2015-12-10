@@ -2,7 +2,7 @@
 
 static void runAllTests(void)
 {
-    //RUN_TEST_GROUP(memorypool);
+    RUN_TEST_GROUP(memorypool);
     RUN_TEST_GROUP(fixed_memorypool);
 }
 
