@@ -1,4 +1,4 @@
-MODULE := text
+MODULE := archive
 ROOT_DIR := ../..
 
 INCLUDE_DIR  = 
@@ -6,7 +6,7 @@ INCLUDE_DIR += .
 INCLUDE_DIR += $(ROOT_DIR)/src/common
 
 SOURCES  = 
-SOURCES += text.c
+SOURCES += rle.c
 
 include $(ROOT_DIR)/mk/defs.mk
 

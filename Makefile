@@ -8,7 +8,7 @@ TEST_DIR = $(ROOT_DIR)/test
 UNITTESTS = $(addsuffix _test,$(addprefix $(BUILD_TEST_DIR)/,$(TARGETS)))
 
 TARGETS = 
-# TARGETS += archive
+TARGETS += archive
 # TARGETS += bit
 TARGETS += container
 TARGETS += framework
