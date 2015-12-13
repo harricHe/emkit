@@ -8,7 +8,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst)
 	uint8_t *wp = dst;
 	size_t dstlen = 0;
 
-	uint8_t value = *wp++;
+	uint8_t value = *rp++;
 	uint8_t continuous_count = 1;
 	size_t  remain = slen - 1;
 
