@@ -22,11 +22,11 @@ TEST(rle, encode_decode)
 	uint8_t work[32];
 	size_t act_len;
 
-	act_len = rle_encode(decode_data, sizeof(decode_data), work);
+	act_len = rle_encode(decode_data, sizeof(decode_data), work, sizeof(work));
 	TEST_ASSERT_EQUAL(sizeof(encode_data), act_len);
 	TEST_ASSERT_EQUAL_UINT8_ARRAY(encode_data, work, act_len);
 
-	act_len = rle_decode(encode_data, act_len, work);
+	act_len = rle_decode(encode_data, sizeof(encode_data), work, sizeof(work));
 	TEST_ASSERT_EQUAL(sizeof(decode_data), act_len);
 	TEST_ASSERT_EQUAL_UINT8_ARRAY(decode_data, work, act_len);
 }

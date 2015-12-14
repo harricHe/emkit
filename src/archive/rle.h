@@ -7,8 +7,8 @@
 extern "C" {
 #endif /* __cplusplus */
 
-size_t rle_encode(const uint8_t *src, size_t slen, uint8_t *dst);
-size_t rle_decode(const uint8_t *src, size_t slen, uint8_t *dst);
+size_t rle_encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen);
+size_t rle_decode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen);
 
 #ifdef __cplusplus
 }
