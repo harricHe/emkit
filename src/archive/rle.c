@@ -165,23 +165,29 @@ static size_t decode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 {
 	const uint8_t *rp = src;
 	uint8_t *wp = dst;
-	size_t dstlen = 0;
 	size_t remain = slen;
+	int32_t i;
 
 	while (remain) {
 		uint8_t length = *rp++;
-		uint8_t value  = *rp++;
-		remain -= 2;
-		while (length--) {
-			*wp++ = value;
-			dstlen++;
-		}
-		if (dstlen >= dlen) {
-			break;
+		remain -= 1;
+		if (length) {
+			uint8_t value = *rp++;
+			remain -= 1;
+			for (i=0; i<length; i++) {
+				*wp++ = value;
+			}
+		} else { /* absolute mode */
+			uint8_t abs_length = *rp++;
+			remain -= 1;
+			for (i=0; i<abs_length; i++) {
+				*wp++ = *rp++;
+			}
+			remain -= abs_length;
 		}
 	}
 
-	return dstlen;
+	return wp - dst;
 }
 
 size_t rle_decode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
