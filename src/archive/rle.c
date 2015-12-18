@@ -121,16 +121,25 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 
 	switch (mode) {
 		case IDLE_MODE:
-			if (buf_count) {
-				if (buf[0] == buf[1]) {
-					*wp++ = 2;
-					*wp++ = buf[0];
-				} else {
+			switch (buf_count) {
+				case 1:
 					*wp++ = 0;
-					*wp++ = 2;
+					*wp++ = 1;
 					*wp++ = buf[0];
-					*wp++ = buf[1];
-				}
+					break;
+				case 2:
+					if (buf[0] == buf[1]) {
+						*wp++ = 2;
+						*wp++ = buf[0];
+					} else {
+						*wp++ = 0;
+						*wp++ = 2;
+						*wp++ = buf[0];
+						*wp++ = buf[1];
+					}
+					break;
+				default:
+					break;
 			}
 			break;
 		case ABSOLUTE_MODE:
