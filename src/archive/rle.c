@@ -34,12 +34,10 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 	const uint8_t *rp = src;
 	uint8_t *wp = dst;
 
-	uint8_t value;
-	uint8_t continuous_count = 0;
 	size_t  remain = slen;
 
-	uint8_t buf_count = 0;
-	uint8_t buf[3];
+	const uint8_t *sp = rp;
+	uint8_t count = 1;
 
 #define IDLE_MODE       (0)
 #define ABSOLUTE_MODE   (1)
@@ -47,95 +45,91 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 	uint8_t mode = IDLE_MODE;
 
 	while (remain--) {
-		buf[buf_count++] = *rp++;
 		switch (mode) {
 			case IDLE_MODE:
-				if (buf_count == 3) {
-					if (buf[0] == buf[1]) {
-						if (buf[0] == buf[2]) {
+				if (count == 3) {
+					if (sp[0] == sp[1]) {
+						if (sp[0] == sp[2]) {
 							/* A A A */
-							value = buf[0];
-							continuous_count = 3;
+							count++;
 							mode = CONTINUOUS_MODE;
-							buf_count = 0;
 						} else {
 							/* A A B */
 							*wp++ = 2;
-							*wp++ = buf[0];
-							buf[0] = buf[2];
-							continuous_count = 0;
-							buf_count = 1;
+							*wp++ = sp[0];
+							sp = &sp[2];
+							count = 1;
 						}
 					} else {
-						if (buf[1] == buf[2]) {
+						if (sp[1] == sp[2]) {
 							/* A B B */
-							*wp++ = 0;      /* absolute: flag */
-							*wp++ = 1;      /* absolute: length */
-							*wp++ = buf[0]; /* absolute: value */
-							value = buf[1];
-							continuous_count = 2;
+							*wp++ = 1;
+							*wp++ = sp[0];
+							sp = &sp[1];
+							count = 2;
 							mode = CONTINUOUS_MODE;
-							buf_count = 0;
 						} else {
 							/* A B C */
-							*wp++ = 0;      /* absolute: flag */
-							*wp++ = 1;      /* absolute: length */
-							*wp++ = buf[0]; /* absolute: value */
-							*wp++ = buf[1]; /* absolute: value */
-							continuous_count = 0;
 							mode = ABSOLUTE_MODE;
-							buf[0] = buf[2];
-							buf_count = 1;
+							count++;
 						}
 					}
+				} else {
+					count++;
 				}
 				break;
 			case ABSOLUTE_MODE:
-				if (buf[0] != buf[1]) {
-					*wp++ = buf[0]; /* absolute: value */
-					buf[0] = buf[1];
-					continuous_count = 0;
-					buf_count = 1;
+				if (sp[count-1] == sp[count]) {
+					/* ... A B B */
+					/* break */
+					int32_t i;
+					*wp++ = 0;
+					*wp++ = count-1;
+					for (i=0; i<count-1; i++) {
+						*wp++ = sp[i];
+					}
+					sp = &sp[count-1];
+					count = 2;
+					mode = IDLE_MODE;
 				} else {
-					value = buf[0];
-					continuous_count = 2;
-					mode = CONTINUOUS_MODE;
-					buf_count = 0;
+					count++;
 				}
 				break;
 			case CONTINUOUS_MODE:
-				if (value == buf[0]) {
-					continuous_count++;
-					buf_count = 0;
-				} else {
-					*wp++ = continuous_count;
-					*wp++ = value;
-					continuous_count = 0;
+				if (sp[count-1] != sp[count]) {
+					/* ... A A B */
+					/* break */
+					*wp++ = count;
+					*wp++ = sp[0];
+					sp = &sp[count++];
+					count = 1;
 					mode = IDLE_MODE;
+				} else {
+					count++;
 				}
 				break;
 			default:
 				break;
 		}
+		rp++;
 	}
 
 	switch (mode) {
 		case IDLE_MODE:
-			switch (buf_count) {
+			switch (count) {
 				case 1:
-					*wp++ = 0;
 					*wp++ = 1;
-					*wp++ = buf[0];
+					*wp++ = sp[0];
 					break;
 				case 2:
-					if (buf[0] == buf[1]) {
+					if (sp[0] == sp[1]) {
 						*wp++ = 2;
-						*wp++ = buf[0];
+						*wp++ = sp[0];
 					} else {
 						*wp++ = 0;
 						*wp++ = 2;
-						*wp++ = buf[0];
-						*wp++ = buf[1];
+						*wp++ = sp[0];
+						*wp++ = sp[1];
 					}
 					break;
 				default:
@@ -143,14 +137,35 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 			}
 			break;
 		case ABSOLUTE_MODE:
-			if (buf_count) {
-				*wp++ = buf[0];
+			if (sp[count-1] == sp[count]) {
+				/* ... A B B */
+				int32_t i;
+				*wp++ = 0;
+				*wp++ = count-1;
+				for (i=0; i<count-1; i++) {
+					*wp++ = sp[i];
+				}
+				*wp++ = 1;
+				*wp++ = sp[count];
+			} else {
+				int32_t i;
+				*wp++ = 0;
+				*wp++ = count;
+				for (i=0; i<count; i++) {
+					*wp++ = sp[i];
+				}
 			}
 			break;
 		case CONTINUOUS_MODE:
-			if (continuous_count) {
-				*wp++ = continuous_count;
-				*wp++ = value;
+			if (sp[count-1] != sp[count]) {
+				/* ... A A B */
+				*wp++ = count;
+				*wp++ = sp[0];
+				*wp++ = 1;
+				*wp++ = sp[count];
+			} else {
+				*wp++ = count;
+				*wp++ = sp[0];
 			}
 			break;
 		default:
