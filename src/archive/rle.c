@@ -34,10 +34,9 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 	const uint8_t *rp = src;
 	uint8_t *wp = dst;
 
-	size_t  remain = slen;
-
 	const uint8_t *sp = rp;
-	uint8_t count = 1;
+	uint8_t count = 0;
+	size_t  remain = slen;
 
 #define IDLE_MODE       (0)
 #define ABSOLUTE_MODE   (1)
@@ -47,7 +46,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 	while (remain--) {
 		switch (mode) {
 			case IDLE_MODE:
-				if (count == 3) {
+				if (count == 2) {
 					if (sp[0] == sp[1]) {
 						if (sp[0] == sp[2]) {
 							/* A A A */
@@ -71,7 +70,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 						} else {
 							/* A B C */
 							mode = ABSOLUTE_MODE;
-							count++;
+							count = 3;
 						}
 					}
 				} else {
@@ -84,13 +83,13 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 					/* break */
 					int32_t i;
 					*wp++ = 0;
-					*wp++ = count-1;
+					*wp++ = count - 1;
 					for (i=0; i<count-1; i++) {
 						*wp++ = sp[i];
 					}
 					sp = &sp[count-1];
 					count = 2;
-					mode = IDLE_MODE;
+					mode = CONTINUOUS_MODE;
 				} else {
 					count++;
 				}
@@ -101,7 +100,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 					/* break */
 					*wp++ = count;
 					*wp++ = sp[0];
-					sp = &sp[count++];
+					sp = &sp[count];
 					count = 1;
 					mode = IDLE_MODE;
 				} else {
@@ -137,17 +136,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 			}
 			break;
 		case ABSOLUTE_MODE:
-			if (sp[count-1] == sp[count]) {
-				/* ... A B B */
-				int32_t i;
-				*wp++ = 0;
-				*wp++ = count-1;
-				for (i=0; i<count-1; i++) {
-					*wp++ = sp[i];
-				}
-				*wp++ = 1;
-				*wp++ = sp[count];
-			} else {
+			{
 				int32_t i;
 				*wp++ = 0;
 				*wp++ = count;
@@ -157,16 +146,8 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 			}
 			break;
 		case CONTINUOUS_MODE:
-			if (sp[count-1] != sp[count]) {
-				/* ... A A B */
-				*wp++ = count;
-				*wp++ = sp[0];
-				*wp++ = 1;
-				*wp++ = sp[count];
-			} else {
-				*wp++ = count;
-				*wp++ = sp[0];
-			}
+			*wp++ = count;
+			*wp++ = sp[0];
 			break;
 		default:
 			break;

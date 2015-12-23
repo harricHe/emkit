@@ -1,6 +1,7 @@
 #include "unity_fixture.h"
 #include "rle.h"
 #include <stdio.h>
+#include <string.h>
 
 TEST_GROUP(rle);
 
@@ -10,6 +11,18 @@ TEST_SETUP(rle)
 
 TEST_TEAR_DOWN(rle)
 {
+}
+
+static void dump(const uint8_t *data, size_t length)
+{
+#if 0
+	size_t i;
+	printf("{ ");
+	for (i=0; i<length; i++) {
+		printf("%02x ", data[i]);
+	}
+	printf("}\n");
+#endif
 }
 
 TEST(rle, encode_decode)
@@ -61,12 +74,26 @@ TEST(rle, encode_decode)
 	for (i=0; i<(int32_t)numof_rle_data; i++) {
 		struct rle_test_data_s *p = &rtd[i];
 		uint8_t work[32];
+		memset(work, 0, 32);
+
 		size_t act_len = rle_encode(p->decode_data, p->numof_decode_data, work, sizeof(work));
+
+		/* printf("<encode>\n"); */
+		dump(p->decode_data, p->numof_decode_data);
+		dump(work, act_len);
+		/* printf("\n"); */
 
 		TEST_ASSERT_EQUAL(p->numof_encode_data, act_len);
 		TEST_ASSERT_EQUAL_UINT8_ARRAY(p->encode_data, work, act_len);
 
+		memset(work, 0, 32);
 		act_len = rle_decode(p->encode_data, p->numof_encode_data, work, sizeof(work));
+
+		/* printf("<decode>\n"); */
+		dump(p->encode_data, p->numof_encode_data);
+		dump(work, act_len);
+		/* printf("\n"); */
+
 		TEST_ASSERT_EQUAL(p->numof_decode_data, act_len);
 		TEST_ASSERT_EQUAL_UINT8_ARRAY(p->decode_data, work, act_len);
 	}
