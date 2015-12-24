@@ -37,6 +37,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 	const uint8_t *sp = rp;
 	uint8_t count = 0;
 	size_t  remain = slen;
+	size_t  wremain = dlen;
 
 #define IDLE_MODE       (0)
 #define ABSOLUTE_MODE   (1)
@@ -54,6 +55,9 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 							mode = CONTINUOUS_MODE;
 						} else {
 							/* A A B */
+							if (wremain < 2) {
+								return 0;
+							}
 							*wp++ = 2;
 							*wp++ = sp[0];
 							sp = &sp[2];
@@ -62,6 +66,9 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 					} else {
 						if (sp[1] == sp[2]) {
 							/* A B B */
+							if (wremain < 2) {
+								return 0;
+							}
 							*wp++ = 1;
 							*wp++ = sp[0];
 							sp = &sp[1];
@@ -82,6 +89,9 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 					/* ... A B B */
 					/* break */
 					int32_t i;
+					if (wremain < 2+count-1) {
+						return 0;
+					}
 					*wp++ = 0;
 					*wp++ = count - 1;
 					for (i=0; i<count-1; i++) {
@@ -98,6 +108,9 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 				if (sp[count-1] != sp[count]) {
 					/* ... A A B */
 					/* break */
+					if (wremain < 2) {
+						return 0;
+					}
 					*wp++ = count;
 					*wp++ = sp[0];
 					sp = &sp[count];
@@ -117,14 +130,23 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 		case IDLE_MODE:
 			switch (count) {
 				case 1:
+					if (wremain < 2) {
+						return 0;
+					}
 					*wp++ = 1;
 					*wp++ = sp[0];
 					break;
 				case 2:
 					if (sp[0] == sp[1]) {
+						if (wremain < 2) {
+							return 0;
+						}
 						*wp++ = 2;
 						*wp++ = sp[0];
 					} else {
+						if (wremain < 4) {
+							return 0;
+						}
 						*wp++ = 0;
 						*wp++ = 2;
 						*wp++ = sp[0];
@@ -138,6 +160,9 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 		case ABSOLUTE_MODE:
 			{
 				int32_t i;
+				if (wremain < 2+count) {
+					return 0;
+				}
 				*wp++ = 0;
 				*wp++ = count;
 				for (i=0; i<count; i++) {
@@ -146,6 +171,9 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 			}
 			break;
 		case CONTINUOUS_MODE:
+			if (wremain < 2) {
+				return 0;
+			}
 			*wp++ = count;
 			*wp++ = sp[0];
 			break;
