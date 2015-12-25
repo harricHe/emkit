@@ -74,7 +74,7 @@ TEST(rle, encode_decode)
 	for (i=0; i<(int32_t)numof_rle_data; i++) {
 		struct rle_test_data_s *p = &rtd[i];
 		uint8_t work[32];
-		memset(work, 0, 32);
+		memset(work, 0, sizeof(work));
 
 		size_t act_len = rle_encode(p->decode_data, p->numof_decode_data, work, sizeof(work));
 
@@ -86,7 +86,7 @@ TEST(rle, encode_decode)
 		TEST_ASSERT_EQUAL(p->numof_encode_data, act_len);
 		TEST_ASSERT_EQUAL_UINT8_ARRAY(p->encode_data, work, act_len);
 
-		memset(work, 0, 32);
+		memset(work, 0, sizeof(work));
 		act_len = rle_decode(p->encode_data, p->numof_encode_data, work, sizeof(work));
 
 		/* printf("<decode>\n"); */
@@ -100,9 +100,51 @@ TEST(rle, encode_decode)
 
 }
 
+
+TEST(rle, encode_overflow)
+{
+	const uint8_t decode_data[] = {
+		0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF
+	};
+	const uint8_t encode_data[] = {
+		0x00, 0x08, 0x12, 0x34, 0x56, 0x78, 0x90, 0xAB, 0xCD, 0xEF
+	};
+
+	struct rle_test_data_s {
+		const uint8_t *decode_data;
+		const uint8_t *encode_data;
+		size_t numof_decode_data;
+		size_t numof_encode_data;
+	} rtd[] = {
+		{ decode_data, encode_data, sizeof(decode_data), sizeof(encode_data) }
+	};
+	size_t numof_rle_data = sizeof(rtd)/sizeof(rtd[0]);
+	int32_t i;
+
+	for (i=0; i<(int32_t)numof_rle_data; i++) {
+		struct rle_test_data_s *p = &rtd[i];
+		uint8_t work[8];
+		memset(work, 0, sizeof(work));
+
+		size_t act_len = rle_encode(p->decode_data, p->numof_decode_data, work, sizeof(work));
+
+		/* printf("<encode>\n"); */
+		dump(p->decode_data, p->numof_decode_data);
+		dump(work, act_len);
+		/* printf("\n"); */
+
+		TEST_ASSERT_EQUAL(0, act_len);
+	}
+
+}
+
+
 TEST_GROUP_RUNNER(rle)
 {
 	/* normal tests */
 	RUN_TEST_CASE(rle, encode_decode);
+
+	/* abnormal tests */
+	RUN_TEST_CASE(rle, encode_overflow);
 }
 
