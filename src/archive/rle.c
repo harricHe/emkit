@@ -89,7 +89,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 					/* ... A B B */
 					/* break */
 					int32_t i;
-					if (wremain < 2+count-1) {
+					if (wremain < (size_t)(2+count-1)) {
 						return 0;
 					}
 					*wp++ = 0;
@@ -160,7 +160,7 @@ static size_t encode(const uint8_t *src, size_t slen, uint8_t *dst, size_t dlen)
 		case ABSOLUTE_MODE:
 			{
 				int32_t i;
-				if (wremain < 2+count) {
+				if (wremain < (size_t)(2+count)) {
 					return 0;
 				}
 				*wp++ = 0;
